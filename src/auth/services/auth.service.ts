@@ -252,6 +252,10 @@ export class AuthService {
             throw new UnauthorizedException('Wrong Credentials..!');
         }
 
+        if (!user.isVerified) {
+            throw new UnauthorizedException('Account is not verified..!');
+        }
+
         const token = await this.generateUserToken(user._id);
 
         return {
