@@ -7,6 +7,7 @@ import { ResendOtpDto } from "../dtos/resend-otp.dto.js";
 import { ForgotPasswordDto } from "../dtos/forgot-password.dto.js";
 import { VerifyResetOtpDto } from "../dtos/verify-reset-otp.dto.js";
 import { ResetPasswordDto } from "../dtos/reset-password.dto.js";
+import { GoogleAuthDto } from "../dtos/google-auth.dto.js";
 
 @Controller('auth')
 export class AuthController {
@@ -28,6 +29,12 @@ export class AuthController {
     @Post('resend-otp')
     async resendOtp(@Body() resendOtpData: ResendOtpDto) {
         return this.authService.resendOtp(resendOtpData);
+    }
+
+    // POST Google Register or Login
+    @Post('google')
+    async googleAuth(@Body() googleAuthData: GoogleAuthDto) {
+        return this.authService.googleAuth(googleAuthData);
     }
 
     // POST Forgot Password (Step 1: Check email and send OTP)

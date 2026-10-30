@@ -1,6 +1,6 @@
 # 🚀 Alwadih Backend API Documentation
 
-Welcome to the **Alwadih Backend API** documentation. This document covers all endpoints for Authentication, Account Verification, and Password Reset.
+Welcome to the **Alwadih Backend API** documentation. This document covers all endpoints for Authentication, Google Sign-in / Sign-up, Account Verification, and Password Reset.
 
 You can import the included Postman collection directly:
 📁 **File:** [`postman_collection.json`](./postman_collection.json)
@@ -12,7 +12,7 @@ You can import the included Postman collection directly:
 | Variable | Default Value | Description |
 | :--- | :--- | :--- |
 | `{{base_url}}` | `http://localhost:8000` | Base URL of the API server |
-| `{{jwt_token}}` | Auto-set on login | Bearer token for authorized requests |
+| `{{jwt_token}}` | Auto-set on login / google auth | Bearer token for authorized requests |
 | `{{reset_token}}` | Auto-set on OTP verify | Temporary token used to complete password reset |
 
 ---
@@ -25,7 +25,8 @@ You can import the included Postman collection directly:
   - [1. User Registration (Signup)](#1-user-registration-signup)
   - [2. Verify Account OTP](#2-verify-account-otp)
   - [3. Resend Account OTP](#3-resend-account-otp)
-  - [4. Login](#4-login)
+  - [4. Register or Login with Google](#4-register-or-login-with-google)
+  - [5. Login](#5-login)
 - [Password Reset Flow](#3-password-reset-flow)
   - [1. Request Reset OTP (Forgot Password)](#1-request-reset-otp-forgot-password)
   - [2. Resend Reset OTP](#2-resend-reset-otp)
@@ -55,18 +56,27 @@ sequenceDiagram
     autonumber
     actor User
     participant API as Alwadih API
+    participant Google as Google Identity
     participant Mail as Nodemailer / SMTP
     participant DB as MongoDB
 
-    User->>API: POST /auth/signup { name, email, password }
-    API->>DB: Save user (isVerified: false, 4-digit OTP)
-    API->>Mail: Send 4-digit OTP email
-    API-->>User: 201 Created ("Registered successfully! Please check your email")
-    User->>API: POST /auth/verify-otp { email, otp }
-    API->>DB: Mark isVerified: true, clear OTP
-    API-->>User: 200 OK ("Account verified successfully!")
-    User->>API: POST /auth/login { email, password }
-    API-->>User: 200 OK { token }
+    alt Standard Registration
+        User->>API: POST /auth/signup { name, email, password }
+        API->>DB: Save user (isVerified: false, 4-digit OTP)
+        API->>Mail: Send 4-digit OTP email
+        API-->>User: 201 Created ("Registered successfully! Please check your email")
+        User->>API: POST /auth/verify-otp { email, otp }
+        API->>DB: Mark isVerified: true, clear OTP
+        API-->>User: 200 OK ("Account verified successfully!")
+        User->>API: POST /auth/login { email, password }
+        API-->>User: 200 OK { token }
+    else Google Sign-in / Sign-up
+        User->>Google: Authenticate & receive token
+        User->>API: POST /auth/google { idToken }
+        API->>Google: Verify token
+        API->>DB: Register or Login user (isVerified: true)
+        API-->>User: 200 OK { token, user }
+    end
 ```
 
 ### 1. User Registration (Signup)
@@ -139,7 +149,40 @@ Generates a new 4-digit OTP if the previous one expired or was not received.
 
 ---
 
-### 4. Login
+### 4. Register or Login with Google
+Authenticates a user via Google/Gmail. If the user does not exist, registers them automatically and marks their account as verified. If they already exist, logs them in.
+
+- **Method:** `POST`
+- **URL:** `{{base_url}}/auth/google`
+- **Headers:** `Content-Type: application/json`
+- **Body:**
+  ```json
+  {
+    "idToken": "<GOOGLE_ID_TOKEN_OR_ACCESS_TOKEN>"
+  }
+  ```
+  *(Accepts `idToken`, `token`, or `credential`)*
+- **Response `200 OK`:**
+  ```json
+  {
+    "message": "Google authentication successful..!",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "user": {
+      "id": "6724391ab...",
+      "name": "Ali Elsese",
+      "email": "ali@gmail.com",
+      "avatar": "https://lh3.googleusercontent.com/...",
+      "isVerified": true
+    }
+  }
+  ```
+- **Error Responses:**
+  - `400 Bad Request`: Missing token.
+  - `401 Unauthorized`: Invalid or expired Google token.
+
+---
+
+### 5. Login
 Authenticates user credentials and returns a JWT token.  
 *(Note: Requires the account to be verified via `/auth/verify-otp` first).*
 
@@ -161,7 +204,7 @@ Authenticates user credentials and returns a JWT token.
   }
   ```
 - **Error Responses:**
-  - `401 Unauthorized`: Wrong credentials or `Account is not verified..!`.
+  - `401 Unauthorized`: Wrong credentials, account not verified, or account registered via Google without a password.
 
 ---
 

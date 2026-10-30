@@ -13,6 +13,9 @@ import { ResendOtpDto } from '../dtos/resend-otp.dto.js';
 import { ForgotPasswordDto } from '../dtos/forgot-password.dto.js';
 import { VerifyResetOtpDto } from '../dtos/verify-reset-otp.dto.js';
 import { ResetPasswordDto } from '../dtos/reset-password.dto.js';
+import { GoogleAuthDto } from '../dtos/google-auth.dto.js';
+import { OAuth2Client } from 'google-auth-library';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +23,7 @@ export class AuthService {
         @InjectModel(User.name) private UserModel: Model<User>,
         private jwtService: JwtService,
         private mailService: MailService,
+        private configService: ConfigService,
     ) { }
 
     // --- REGISTRATION & ACCOUNT VERIFICATION ---
@@ -111,6 +115,131 @@ export class AuthService {
 
         return {
             message: "A new OTP code has been sent to your email."
+        };
+    }
+
+    // --- GOOGLE AUTHENTICATION (REGISTER / LOGIN) ---
+
+    private async verifyGoogleToken(token: string): Promise<{
+        email: string;
+        name: string;
+        googleId: string;
+        avatar?: string;
+    }> {
+        const clientId = this.configService.get<string>('google.clientId') || process.env.GOOGLE_CLIENT_ID;
+        const client = new OAuth2Client(clientId || undefined);
+
+        // 1. Verify as Google ID token using google-auth-library
+        try {
+            const ticket = await client.verifyIdToken({
+                idToken: token,
+                audience: clientId ? clientId : undefined,
+            });
+            const payload = ticket.getPayload();
+            if (payload && payload.email) {
+                return {
+                    email: payload.email,
+                    name: payload.name || payload.email.split('@')[0],
+                    googleId: payload.sub,
+                    avatar: payload.picture,
+                };
+            }
+        } catch {
+            // Not an ID token or audience mismatch; try userinfo / tokeninfo below
+        }
+
+        // 2. Verify as OAuth2 Access Token via Google userinfo endpoint
+        try {
+            const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (res.ok) {
+                const data = (await res.json()) as { sub: string; email: string; name?: string; picture?: string };
+                if (data && data.email) {
+                    return {
+                        email: data.email,
+                        name: data.name || data.email.split('@')[0],
+                        googleId: data.sub,
+                        avatar: data.picture,
+                    };
+                }
+            }
+        } catch {
+            // Access token verification failed
+        }
+
+        // 3. Fallback: Google tokeninfo endpoint
+        try {
+            const res = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(token)}`);
+            if (res.ok) {
+                const data = (await res.json()) as { sub: string; email: string; name?: string; picture?: string };
+                if (data && data.email) {
+                    return {
+                        email: data.email,
+                        name: data.name || data.email.split('@')[0],
+                        googleId: data.sub,
+                        avatar: data.picture,
+                    };
+                }
+            }
+        } catch {
+            // tokeninfo endpoint failed
+        }
+
+        throw new UnauthorizedException('Invalid or expired Google token..!');
+    }
+
+    async googleAuth(googleAuthData: GoogleAuthDto) {
+        const token = googleAuthData.token || googleAuthData.idToken || googleAuthData.credential;
+        if (!token) {
+            throw new BadRequestException('A valid Google token (token, idToken, or credential) is required..!');
+        }
+
+        const { email, name, googleId, avatar } = await this.verifyGoogleToken(token);
+
+        let user = await this.UserModel.findOne({ email });
+
+        if (!user) {
+            // Register new user via Google
+            user = await this.UserModel.create({
+                name,
+                email,
+                googleId,
+                avatar,
+                isVerified: true, // Google accounts are pre-verified
+            });
+        } else {
+            // Login existing user & link Google account details if missing
+            let modified = false;
+            if (!user.googleId) {
+                user.googleId = googleId;
+                modified = true;
+            }
+            if (avatar && !user.avatar) {
+                user.avatar = avatar;
+                modified = true;
+            }
+            if (!user.isVerified) {
+                user.isVerified = true;
+                modified = true;
+            }
+            if (modified) {
+                await user.save();
+            }
+        }
+
+        const jwt = await this.generateUserToken(user._id);
+
+        return {
+            message: "Google authentication successful..!",
+            token: jwt.accessToken,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                avatar: user.avatar,
+                isVerified: user.isVerified,
+            }
         };
     }
 
@@ -245,6 +374,10 @@ export class AuthService {
         const user = await this.UserModel.findOne({ email });
         if (!user) {
             throw new UnauthorizedException('Wrong Credentials..!');
+        }
+
+        if (!user.password) {
+            throw new UnauthorizedException('This account was registered with Google. Please sign in using Google.');
         }
 
         const passwordMatch = await bcrypt.compare(password, user.password);
