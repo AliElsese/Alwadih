@@ -62,12 +62,12 @@ sequenceDiagram
 
     alt Standard Registration
         User->>API: POST /auth/signup { name, email, password }
-        API->>DB: Save user (isVerified: false, 4-digit OTP)
-        API->>Mail: Send 4-digit OTP email
-        API-->>User: 201 Created ("Registered successfully! Please check your email")
+        API->>DB: Save user (isVerified: false, 4-digit verification code)
+        API->>Mail: Send 4-digit verification code email
+        API-->>User: 201 Created ("Account registered successfully. A verification code has been sent to your email.")
         User->>API: POST /auth/verify-otp { email, otp }
         API->>DB: Mark isVerified: true, clear OTP
-        API-->>User: 200 OK ("Account verified successfully!")
+        API-->>User: 200 OK ("Account verified successfully.")
         User->>API: POST /auth/login { email, password }
         API-->>User: 200 OK { token }
     else Google Sign-in / Sign-up
@@ -80,7 +80,7 @@ sequenceDiagram
 ```
 
 ### 1. User Registration (Signup)
-Creates a new account, generates a **4-digit OTP**, and emails it to the user.
+Creates a new account, generates a **4-digit verification code**, and emails it to the user.
 
 - **Method:** `POST`
 - **URL:** `{{base_url}}/auth/signup`
@@ -96,16 +96,16 @@ Creates a new account, generates a **4-digit OTP**, and emails it to the user.
 - **Response `201 Created`:**
   ```json
   {
-    "message": "Registered successfully! Please check your email for the OTP verification code."
+    "message": "Account registered successfully. A verification code has been sent to your email."
   }
   ```
 - **Error Responses:**
-  - `400 Bad Request`: Email already registered or invalid fields.
+  - `400 Bad Request`: `An account with this email address already exists.`
 
 ---
 
 ### 2. Verify Account OTP
-Validates the 4-digit OTP and activates the account.
+Validates the 4-digit verification code and activates the account.
 
 - **Method:** `POST`
 - **URL:** `{{base_url}}/auth/verify-otp`
@@ -120,16 +120,17 @@ Validates the 4-digit OTP and activates the account.
 - **Response `200 OK`:**
   ```json
   {
-    "message": "Account verified successfully..!"
+    "message": "Account verified successfully."
   }
   ```
 - **Error Responses:**
-  - `400 Bad Request`: Invalid OTP or OTP expired (valid for 10 minutes).
+  - `400 Bad Request`: `Invalid verification code.` or `Verification code has expired. Please request a new one.`
+  - `404 Not Found`: `Account not found with the provided email.`
 
 ---
 
 ### 3. Resend Account OTP
-Generates a new 4-digit OTP if the previous one expired or was not received.
+Generates a new 4-digit code if the previous one expired or was not received.
 
 - **Method:** `POST`
 - **URL:** `{{base_url}}/auth/resend-otp`
@@ -143,9 +144,11 @@ Generates a new 4-digit OTP if the previous one expired or was not received.
 - **Response `200 OK`:**
   ```json
   {
-    "message": "A new OTP code has been sent to your email."
+    "message": "A new verification code has been sent to your email."
   }
   ```
+- **Error Responses:**
+  - `404 Not Found`: `Account not found with the provided email.`
 
 ---
 
@@ -165,20 +168,20 @@ Authenticates a user via Google/Gmail. If the user does not exist, registers the
 - **Response `200 OK`:**
   ```json
   {
-    "message": "Google authentication successful..!",
+    "message": "Google authentication successful.",
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
     "user": {
       "id": "6724391ab...",
       "name": "Ali Elsese",
-      "email": "ali@gmail.com",
+      "email": "info.alwadih@gmail.com",
       "avatar": "https://lh3.googleusercontent.com/...",
       "isVerified": true
     }
   }
   ```
 - **Error Responses:**
-  - `400 Bad Request`: Missing token.
-  - `401 Unauthorized`: Invalid or expired Google token.
+  - `400 Bad Request`: `Google authentication token is required.`
+  - `401 Unauthorized`: `Google authentication failed: token is invalid or expired.`
 
 ---
 
@@ -199,12 +202,14 @@ Authenticates user credentials and returns a JWT token.
 - **Response `200 OK`:**
   ```json
   {
-    "message": "Loggedin Successfully..!",
+    "message": "Login successful.",
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
   }
   ```
 - **Error Responses:**
-  - `401 Unauthorized`: Wrong credentials, account not verified, or account registered via Google without a password.
+  - `401 Unauthorized`: `Invalid email or password.`
+  - `401 Unauthorized`: `Account is not verified. Please verify your email before logging in.`
+  - `401 Unauthorized`: `This account was registered using Google. Please sign in with Google or reset your password.`
 
 ---
 
@@ -221,17 +226,17 @@ sequenceDiagram
     User->>API: POST /auth/forgot-password { email }
     API->>DB: Set resetOtp (4 digits, 10 min expiry)
     API->>Mail: Send Password Reset OTP email
-    API-->>User: 200 OK ("Password reset OTP has been sent")
+    API-->>User: 200 OK ("Password reset code has been sent to your email.")
     User->>API: POST /auth/verify-reset-otp { email, otp }
     API->>DB: Verify OTP, issue 15-min resetToken
     API-->>User: 200 OK { resetToken }
     User->>API: POST /auth/reset-password { email, newPassword, resetToken }
     API->>DB: Hash new password, clear reset tokens
-    API-->>User: 200 OK ("Password has been reset successfully!")
+    API-->>User: 200 OK ("Password has been reset successfully. You can now log in with your new password.")
 ```
 
 ### 1. Request Reset OTP (Forgot Password)
-Sends a 4-digit reset OTP to the user's email.
+Sends a 4-digit reset code to the user's email.
 
 - **Method:** `POST`
 - **URL:** `{{base_url}}/auth/forgot-password`
@@ -245,16 +250,16 @@ Sends a 4-digit reset OTP to the user's email.
 - **Response `200 OK`:**
   ```json
   {
-    "message": "Password reset OTP has been sent to your email."
+    "message": "Password reset code has been sent to your email."
   }
   ```
 - **Error Responses:**
-  - `404 Not Found`: No account found with this email.
+  - `404 Not Found`: `No account found with this email address.`
 
 ---
 
 ### 2. Resend Reset OTP
-Resends a new 4-digit OTP for password reset.
+Resends a new 4-digit code for password reset.
 
 - **Method:** `POST`
 - **URL:** `{{base_url}}/auth/resend-reset-otp`
@@ -268,14 +273,16 @@ Resends a new 4-digit OTP for password reset.
 - **Response `200 OK`:**
   ```json
   {
-    "message": "A new password reset OTP has been sent to your email."
+    "message": "A new password reset code has been sent to your email."
   }
   ```
+- **Error Responses:**
+  - `404 Not Found`: `No account found with this email address.`
 
 ---
 
 ### 3. Verify Reset OTP
-Verifies the 4-digit OTP and returns a temporary `resetToken` valid for 15 minutes.
+Verifies the 4-digit code and returns a temporary `resetToken` valid for 15 minutes.
 
 - **Method:** `POST`
 - **URL:** `{{base_url}}/auth/verify-reset-otp`
@@ -290,12 +297,13 @@ Verifies the 4-digit OTP and returns a temporary `resetToken` valid for 15 minut
 - **Response `200 OK`:**
   ```json
   {
-    "message": "OTP verified successfully. You can now reset your password.",
+    "message": "Verification code verified successfully. You may now reset your password.",
     "resetToken": "5f8a29b4e1c390..."
   }
   ```
 - **Error Responses:**
-  - `400 Bad Request`: Invalid OTP or OTP expired.
+  - `400 Bad Request`: `Invalid verification code.` or `Verification code has expired. Please request a new one.`
+  - `404 Not Found`: `No account found with this email address.`
 
 ---
 
@@ -316,8 +324,10 @@ Resets the password to `newPassword` using the `resetToken`.
 - **Response `200 OK`:**
   ```json
   {
-    "message": "Password has been reset successfully! You can now log in with your new password."
+    "message": "Password has been reset successfully. You can now log in with your new password."
   }
   ```
 - **Error Responses:**
-  - `400 Bad Request`: Password reset session expired, invalid token, or password shorter than 6 characters.
+  - `400 Bad Request`: `Password reset session has expired or is invalid. Please request a new verification code.`
+  - `400 Bad Request`: `Invalid or expired reset token.`
+  - `404 Not Found`: `No account found with this email address.`

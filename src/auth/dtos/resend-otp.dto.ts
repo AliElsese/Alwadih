@@ -1,7 +1,6 @@
 import { IsEmail } from "class-validator";
 
 export class ResendOtpDto {
-    @IsEmail()
+    @IsEmail({}, { message: 'Please provide a valid email address.' })
     email: string;
 }
-

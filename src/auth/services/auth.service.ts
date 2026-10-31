@@ -33,7 +33,7 @@ export class AuthService {
 
         const emailInUse = await this.UserModel.findOne({ email });
         if (emailInUse) {
-            throw new BadRequestException('Email already registered..!');
+            throw new BadRequestException('An account with this email address already exists.');
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -55,7 +55,7 @@ export class AuthService {
         await this.mailService.sendOtpEmail(email, otp);
 
         return {
-            message: "Registered successfully! Please check your email for the OTP verification code."
+            message: 'Account registered successfully. A verification code has been sent to your email.'
         };
     }
 
@@ -64,21 +64,21 @@ export class AuthService {
 
         const user = await this.UserModel.findOne({ email });
         if (!user) {
-            throw new BadRequestException('User not found..!');
+            throw new NotFoundException('Account not found with the provided email.');
         }
 
         if (user.isVerified) {
             return {
-                message: "Account is already verified."
+                message: 'Account is already verified.'
             };
         }
 
         if (!user.otp || user.otp !== otp) {
-            throw new BadRequestException('Invalid OTP code..!');
+            throw new BadRequestException('Invalid verification code.');
         }
 
         if (user.otpExpiresAt && user.otpExpiresAt < new Date()) {
-            throw new BadRequestException('OTP code has expired..!');
+            throw new BadRequestException('Verification code has expired. Please request a new one.');
         }
 
         user.isVerified = true;
@@ -87,7 +87,7 @@ export class AuthService {
         await user.save();
 
         return {
-            message: "Account verified successfully..!"
+            message: 'Account verified successfully.'
         };
     }
 
@@ -96,12 +96,12 @@ export class AuthService {
 
         const user = await this.UserModel.findOne({ email });
         if (!user) {
-            throw new BadRequestException('User not found..!');
+            throw new NotFoundException('Account not found with the provided email.');
         }
 
         if (user.isVerified) {
             return {
-                message: "Account is already verified."
+                message: 'Account is already verified.'
             };
         }
 
@@ -114,7 +114,7 @@ export class AuthService {
         await this.mailService.sendOtpEmail(email, otp);
 
         return {
-            message: "A new OTP code has been sent to your email."
+            message: 'A new verification code has been sent to your email.'
         };
     }
 
@@ -186,13 +186,13 @@ export class AuthService {
             // tokeninfo endpoint failed
         }
 
-        throw new UnauthorizedException('Invalid or expired Google token..!');
+        throw new UnauthorizedException('Google authentication failed: token is invalid or expired.');
     }
 
     async googleAuth(googleAuthData: GoogleAuthDto) {
         const token = googleAuthData.token || googleAuthData.idToken || googleAuthData.credential;
         if (!token) {
-            throw new BadRequestException('A valid Google token (token, idToken, or credential) is required..!');
+            throw new BadRequestException('Google authentication token is required.');
         }
 
         const { email, name, googleId, avatar } = await this.verifyGoogleToken(token);
@@ -231,7 +231,7 @@ export class AuthService {
         const jwt = await this.generateUserToken(user._id);
 
         return {
-            message: "Google authentication successful..!",
+            message: 'Google authentication successful.',
             token: jwt.accessToken,
             user: {
                 id: user._id,
@@ -251,7 +251,7 @@ export class AuthService {
 
         const user = await this.UserModel.findOne({ email });
         if (!user) {
-            throw new NotFoundException('No account found with this email..!');
+            throw new NotFoundException('No account found with this email address.');
         }
 
         // Generate 4-digit OTP code & 10 minutes expiry
@@ -268,7 +268,7 @@ export class AuthService {
         await this.mailService.sendPasswordResetOtpEmail(email, resetOtp);
 
         return {
-            message: "Password reset OTP has been sent to your email."
+            message: 'Password reset code has been sent to your email.'
         };
     }
 
@@ -278,7 +278,7 @@ export class AuthService {
 
         const user = await this.UserModel.findOne({ email });
         if (!user) {
-            throw new NotFoundException('No account found with this email..!');
+            throw new NotFoundException('No account found with this email address.');
         }
 
         // Generate a new 4-digit OTP code & 10 minutes expiry
@@ -295,7 +295,7 @@ export class AuthService {
         await this.mailService.sendPasswordResetOtpEmail(email, resetOtp);
 
         return {
-            message: "A new password reset OTP has been sent to your email."
+            message: 'A new password reset code has been sent to your email.'
         };
     }
 
@@ -305,15 +305,15 @@ export class AuthService {
 
         const user = await this.UserModel.findOne({ email });
         if (!user) {
-            throw new NotFoundException('No account found with this email..!');
+            throw new NotFoundException('No account found with this email address.');
         }
 
         if (!user.resetOtp || user.resetOtp !== otp) {
-            throw new BadRequestException('Invalid OTP code..!');
+            throw new BadRequestException('Invalid verification code.');
         }
 
         if (user.resetOtpExpiresAt && user.resetOtpExpiresAt < new Date()) {
-            throw new BadRequestException('OTP code has expired..!');
+            throw new BadRequestException('Verification code has expired. Please request a new one.');
         }
 
         // Generate a 15-minute reset session token
@@ -327,7 +327,7 @@ export class AuthService {
         await user.save();
 
         return {
-            message: "OTP verified successfully. You can now reset your password.",
+            message: 'Verification code verified successfully. You may now reset your password.',
             resetToken
         };
     }
@@ -338,17 +338,17 @@ export class AuthService {
 
         const user = await this.UserModel.findOne({ email });
         if (!user) {
-            throw new NotFoundException('No account found with this email..!');
+            throw new NotFoundException('No account found with this email address.');
         }
 
         // Validate that user went through step 2 (OTP verification)
         if (!user.resetToken || !user.resetTokenExpiresAt || user.resetTokenExpiresAt < new Date()) {
-            throw new BadRequestException('Password reset session has expired or is invalid. Please request a new OTP..!');
+            throw new BadRequestException('Password reset session has expired or is invalid. Please request a new verification code.');
         }
 
         // If client sends the resetToken, ensure it matches
         if (resetToken && user.resetToken !== resetToken) {
-            throw new BadRequestException('Invalid reset token..!');
+            throw new BadRequestException('Invalid or expired reset token.');
         }
 
         const hashedPassword = await bcrypt.hash(newPassword, 10);
@@ -362,7 +362,7 @@ export class AuthService {
         await user.save();
 
         return {
-            message: "Password has been reset successfully! You can now log in with your new password."
+            message: 'Password has been reset successfully. You can now log in with your new password.'
         };
     }
 
@@ -373,26 +373,26 @@ export class AuthService {
 
         const user = await this.UserModel.findOne({ email });
         if (!user) {
-            throw new UnauthorizedException('Wrong Credentials..!');
+            throw new UnauthorizedException('Invalid email or password.');
         }
 
         if (!user.password) {
-            throw new UnauthorizedException('This account was registered with Google. Please sign in using Google.');
+            throw new UnauthorizedException('This account was registered using Google. Please sign in with Google or reset your password.');
         }
 
         const passwordMatch = await bcrypt.compare(password, user.password);
         if (!passwordMatch) {
-            throw new UnauthorizedException('Wrong Credentials..!');
+            throw new UnauthorizedException('Invalid email or password.');
         }
 
         if (!user.isVerified) {
-            throw new UnauthorizedException('Account is not verified..!');
+            throw new UnauthorizedException('Account is not verified. Please verify your email before logging in.');
         }
 
         const token = await this.generateUserToken(user._id);
 
         return {
-            message: "Loggedin Successfully..!",
+            message: 'Login successful.',
             token: token.accessToken
         };
     }

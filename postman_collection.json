@@ -64,7 +64,7 @@
               "host": ["{{base_url}}"],
               "path": ["auth", "signup"]
             },
-            "description": "Registers a new user, hashes the password, creates an unverified account, generates a 4-digit OTP, and emails it to the user."
+            "description": "Registers a new user account, securely hashes the password, generates a 4-digit verification code, and sends it via email."
           },
           "response": []
         },
@@ -87,7 +87,7 @@
               "host": ["{{base_url}}"],
               "path": ["auth", "verify-otp"]
             },
-            "description": "Verifies the 4-digit OTP sent to the user's email upon signup, marking the account as isVerified: true."
+            "description": "Verifies the 4-digit code sent to the user's email upon signup and activates the account."
           },
           "response": []
         },
@@ -110,7 +110,7 @@
               "host": ["{{base_url}}"],
               "path": ["auth", "resend-otp"]
             },
-            "description": "Generates a fresh 4-digit OTP and resends it to the user's email if the previous one expired or was not received."
+            "description": "Generates a fresh 4-digit verification code and resends it to the user's email if the previous code expired or was not received."
           },
           "response": []
         },
@@ -150,7 +150,7 @@
               "host": ["{{base_url}}"],
               "path": ["auth", "google"]
             },
-            "description": "Registers a new user or logs in an existing user with Gmail / Google. Accepts Google idToken, token, or credential. Generates JWT token and marks account as verified automatically."
+            "description": "Authenticates a user via Google/Gmail. Registers new users automatically with verified status, or logs in existing accounts, returning a signed JWT access token."
           },
           "response": []
         },
@@ -190,7 +190,7 @@
               "host": ["{{base_url}}"],
               "path": ["auth", "login"]
             },
-            "description": "Authenticates a verified user and returns a signed JWT access token. If account is not verified, returns 401 Unauthorized."
+            "description": "Authenticates a verified user and returns a signed JWT access token. Returns 401 Unauthorized if credentials are invalid or if the email is not verified."
           },
           "response": []
         }
@@ -218,7 +218,7 @@
               "host": ["{{base_url}}"],
               "path": ["auth", "forgot-password"]
             },
-            "description": "Step 1 of password reset. Checks that user exists, generates a 4-digit reset OTP, and emails it."
+            "description": "Step 1 of password reset. Checks that user exists, generates a 4-digit reset code, and emails it."
           },
           "response": []
         },
@@ -241,7 +241,7 @@
               "host": ["{{base_url}}"],
               "path": ["auth", "resend-reset-otp"]
             },
-            "description": "Generates a fresh 4-digit reset OTP and resends it if the previous one expired."
+            "description": "Generates a fresh 4-digit reset code and resends it if the previous one expired."
           },
           "response": []
         },
@@ -281,7 +281,7 @@
               "host": ["{{base_url}}"],
               "path": ["auth", "verify-reset-otp"]
             },
-            "description": "Step 2 of password reset. Verifies the 4-digit OTP code and generates a temporary resetToken valid for 15 minutes."
+            "description": "Step 2 of password reset. Verifies the 4-digit reset code and generates a temporary resetToken valid for 15 minutes."
           },
           "response": []
         },
