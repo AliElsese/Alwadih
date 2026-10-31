@@ -82,6 +82,12 @@ sequenceDiagram
 ### 1. User Registration (Signup)
 Creates a new account, generates a **4-digit verification code**, and emails it to the user.
 
+> **Password Policy Requirements:**
+> - Minimum length: **10 characters**
+> - At least **1 letter** (`a-z`, `A-Z`)
+> - At least **1 number** (`0-9`)
+> - At least **1 special character** (e.g. `!@#$%^&*()_+-=[]{};':",.<>/?`)
+
 - **Method:** `POST`
 - **URL:** `{{base_url}}/auth/signup`
 - **Headers:** `Content-Type: application/json`
@@ -101,6 +107,8 @@ Creates a new account, generates a **4-digit verification code**, and emails it 
   ```
 - **Error Responses:**
   - `400 Bad Request`: `An account with this email address already exists.`
+  - `400 Bad Request`: `Password must be at least 10 characters long.`
+  - `400 Bad Request`: `Password must contain at least one letter, one number, and one special character.`
 
 ---
 
@@ -310,6 +318,12 @@ Verifies the 4-digit code and returns a temporary `resetToken` valid for 15 minu
 ### 4. Change Password
 Resets the password to `newPassword` using the `resetToken`.
 
+> **Password Policy Requirements:**
+> - Minimum length: **10 characters**
+> - At least **1 letter** (`a-z`, `A-Z`)
+> - At least **1 number** (`0-9`)
+> - At least **1 special character** (e.g. `!@#$%^&*()_+-=[]{};':",.<>/?`)
+
 - **Method:** `POST`
 - **URL:** `{{base_url}}/auth/reset-password`
 - **Headers:** `Content-Type: application/json`
@@ -330,4 +344,6 @@ Resets the password to `newPassword` using the `resetToken`.
 - **Error Responses:**
   - `400 Bad Request`: `Password reset session has expired or is invalid. Please request a new verification code.`
   - `400 Bad Request`: `Invalid or expired reset token.`
+  - `400 Bad Request`: `Password must be at least 10 characters long.`
+  - `400 Bad Request`: `Password must contain at least one letter, one number, and one special character.`
   - `404 Not Found`: `No account found with this email address.`
