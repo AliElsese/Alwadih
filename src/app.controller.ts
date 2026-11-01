@@ -1,12 +1,14 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service.js';
+import { Language } from './common/i18n/language.decorator.js';
+import type { AppLanguage } from './common/i18n/language.decorator.js';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  getHello(@Language() lang: AppLanguage): string {
+    return this.appService.getHello(lang);
   }
 }

@@ -16,6 +16,8 @@ import { ResetPasswordDto } from '../dtos/reset-password.dto.js';
 import { GoogleAuthDto } from '../dtos/google-auth.dto.js';
 import { OAuth2Client } from 'google-auth-library';
 import { ConfigService } from '@nestjs/config';
+import type { AppLanguage } from '../../common/i18n/language.decorator.js';
+import { getMessages } from '../../common/i18n/messages.js';
 
 @Injectable()
 export class AuthService {
@@ -28,12 +30,13 @@ export class AuthService {
 
     // --- REGISTRATION & ACCOUNT VERIFICATION ---
 
-    async signup(signupData: SignupDto) {
+    async signup(signupData: SignupDto, lang: AppLanguage = 'en') {
+        const msg = getMessages(lang);
         const { name, email, password } = signupData;
 
         const emailInUse = await this.UserModel.findOne({ email });
         if (emailInUse) {
-            throw new BadRequestException('An account with this email address already exists.');
+            throw new BadRequestException(msg.accountAlreadyExists);
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -52,33 +55,34 @@ export class AuthService {
         });
 
         // Send OTP via email
-        await this.mailService.sendOtpEmail(email, otp);
+        await this.mailService.sendOtpEmail(email, otp, lang);
 
         return {
-            message: 'Account registered successfully. A verification code has been sent to your email.'
+            message: msg.accountRegisteredSuccess
         };
     }
 
-    async verifyOtp(verifyOtpData: VerifyOtpDto) {
+    async verifyOtp(verifyOtpData: VerifyOtpDto, lang: AppLanguage = 'en') {
+        const msg = getMessages(lang);
         const { email, otp } = verifyOtpData;
 
         const user = await this.UserModel.findOne({ email });
         if (!user) {
-            throw new NotFoundException('Account not found with the provided email.');
+            throw new NotFoundException(msg.accountNotFound);
         }
 
         if (user.isVerified) {
             return {
-                message: 'Account is already verified.'
+                message: msg.accountAlreadyVerified
             };
         }
 
         if (!user.otp || user.otp !== otp) {
-            throw new BadRequestException('Invalid verification code.');
+            throw new BadRequestException(msg.invalidOtp);
         }
 
         if (user.otpExpiresAt && user.otpExpiresAt < new Date()) {
-            throw new BadRequestException('Verification code has expired. Please request a new one.');
+            throw new BadRequestException(msg.otpExpired);
         }
 
         user.isVerified = true;
@@ -87,21 +91,22 @@ export class AuthService {
         await user.save();
 
         return {
-            message: 'Account verified successfully.'
+            message: msg.accountVerifiedSuccess
         };
     }
 
-    async resendOtp(resendOtpData: ResendOtpDto) {
+    async resendOtp(resendOtpData: ResendOtpDto, lang: AppLanguage = 'en') {
+        const msg = getMessages(lang);
         const { email } = resendOtpData;
 
         const user = await this.UserModel.findOne({ email });
         if (!user) {
-            throw new NotFoundException('Account not found with the provided email.');
+            throw new NotFoundException(msg.accountNotFound);
         }
 
         if (user.isVerified) {
             return {
-                message: 'Account is already verified.'
+                message: msg.accountAlreadyVerified
             };
         }
 
@@ -111,21 +116,22 @@ export class AuthService {
         user.otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
         await user.save();
 
-        await this.mailService.sendOtpEmail(email, otp);
+        await this.mailService.sendOtpEmail(email, otp, lang);
 
         return {
-            message: 'A new verification code has been sent to your email.'
+            message: msg.otpResentSuccess
         };
     }
 
     // --- GOOGLE AUTHENTICATION (REGISTER / LOGIN) ---
 
-    private async verifyGoogleToken(token: string): Promise<{
+    private async verifyGoogleToken(token: string, lang: AppLanguage = 'en'): Promise<{
         email: string;
         name: string;
         googleId: string;
         avatar?: string;
     }> {
+        const msg = getMessages(lang);
         const clientId = this.configService.get<string>('google.clientId') || process.env.GOOGLE_CLIENT_ID;
         const client = new OAuth2Client(clientId || undefined);
 
@@ -186,16 +192,17 @@ export class AuthService {
             // tokeninfo endpoint failed
         }
 
-        throw new UnauthorizedException('Google authentication failed: token is invalid or expired.');
+        throw new UnauthorizedException(msg.googleAuthFailed);
     }
 
-    async googleAuth(googleAuthData: GoogleAuthDto) {
+    async googleAuth(googleAuthData: GoogleAuthDto, lang: AppLanguage = 'en') {
+        const msg = getMessages(lang);
         const token = googleAuthData.token || googleAuthData.idToken || googleAuthData.credential;
         if (!token) {
-            throw new BadRequestException('Google authentication token is required.');
+            throw new BadRequestException(msg.googleTokenRequired);
         }
 
-        const { email, name, googleId, avatar } = await this.verifyGoogleToken(token);
+        const { email, name, googleId, avatar } = await this.verifyGoogleToken(token, lang);
 
         let user = await this.UserModel.findOne({ email });
 
@@ -231,7 +238,7 @@ export class AuthService {
         const jwt = await this.generateUserToken(user._id);
 
         return {
-            message: 'Google authentication successful.',
+            message: msg.googleAuthSuccess,
             token: jwt.accessToken,
             user: {
                 id: user._id,
@@ -246,12 +253,13 @@ export class AuthService {
     // --- FORGOT PASSWORD FLOW ---
 
     // Step 1: Send OTP for password reset
-    async forgotPassword(forgotPasswordData: ForgotPasswordDto) {
+    async forgotPassword(forgotPasswordData: ForgotPasswordDto, lang: AppLanguage = 'en') {
+        const msg = getMessages(lang);
         const { email } = forgotPasswordData;
 
         const user = await this.UserModel.findOne({ email });
         if (!user) {
-            throw new NotFoundException('No account found with this email address.');
+            throw new NotFoundException(msg.emailNotFound);
         }
 
         // Generate 4-digit OTP code & 10 minutes expiry
@@ -265,20 +273,21 @@ export class AuthService {
         await user.save();
 
         // Send Password Reset OTP Email
-        await this.mailService.sendPasswordResetOtpEmail(email, resetOtp);
+        await this.mailService.sendPasswordResetOtpEmail(email, resetOtp, lang);
 
         return {
-            message: 'Password reset code has been sent to your email.'
+            message: msg.forgotPasswordOtpSent
         };
     }
 
     // Resend Reset Password OTP
-    async resendResetOtp(resendResetOtpData: ResendOtpDto) {
+    async resendResetOtp(resendResetOtpData: ResendOtpDto, lang: AppLanguage = 'en') {
+        const msg = getMessages(lang);
         const { email } = resendResetOtpData;
 
         const user = await this.UserModel.findOne({ email });
         if (!user) {
-            throw new NotFoundException('No account found with this email address.');
+            throw new NotFoundException(msg.emailNotFound);
         }
 
         // Generate a new 4-digit OTP code & 10 minutes expiry
@@ -292,28 +301,29 @@ export class AuthService {
         await user.save();
 
         // Send Password Reset OTP Email
-        await this.mailService.sendPasswordResetOtpEmail(email, resetOtp);
+        await this.mailService.sendPasswordResetOtpEmail(email, resetOtp, lang);
 
         return {
-            message: 'A new password reset code has been sent to your email.'
+            message: msg.resetOtpResent
         };
     }
 
     // Step 2: Verify reset OTP and generate a temporary reset token
-    async verifyResetOtp(verifyResetOtpData: VerifyResetOtpDto) {
+    async verifyResetOtp(verifyResetOtpData: VerifyResetOtpDto, lang: AppLanguage = 'en') {
+        const msg = getMessages(lang);
         const { email, otp } = verifyResetOtpData;
 
         const user = await this.UserModel.findOne({ email });
         if (!user) {
-            throw new NotFoundException('No account found with this email address.');
+            throw new NotFoundException(msg.emailNotFound);
         }
 
         if (!user.resetOtp || user.resetOtp !== otp) {
-            throw new BadRequestException('Invalid verification code.');
+            throw new BadRequestException(msg.invalidOtp);
         }
 
         if (user.resetOtpExpiresAt && user.resetOtpExpiresAt < new Date()) {
-            throw new BadRequestException('Verification code has expired. Please request a new one.');
+            throw new BadRequestException(msg.otpExpired);
         }
 
         // Generate a 15-minute reset session token
@@ -327,28 +337,29 @@ export class AuthService {
         await user.save();
 
         return {
-            message: 'Verification code verified successfully. You may now reset your password.',
+            message: msg.resetOtpVerified,
             resetToken
         };
     }
 
     // Step 3: Change password
-    async resetPassword(resetPasswordData: ResetPasswordDto) {
+    async resetPassword(resetPasswordData: ResetPasswordDto, lang: AppLanguage = 'en') {
+        const msg = getMessages(lang);
         const { email, newPassword, resetToken } = resetPasswordData;
 
         const user = await this.UserModel.findOne({ email });
         if (!user) {
-            throw new NotFoundException('No account found with this email address.');
+            throw new NotFoundException(msg.emailNotFound);
         }
 
         // Validate that user went through step 2 (OTP verification)
         if (!user.resetToken || !user.resetTokenExpiresAt || user.resetTokenExpiresAt < new Date()) {
-            throw new BadRequestException('Password reset session has expired or is invalid. Please request a new verification code.');
+            throw new BadRequestException(msg.resetSessionExpired);
         }
 
         // If client sends the resetToken, ensure it matches
         if (resetToken && user.resetToken !== resetToken) {
-            throw new BadRequestException('Invalid or expired reset token.');
+            throw new BadRequestException(msg.invalidResetToken);
         }
 
         const hashedPassword = await bcrypt.hash(newPassword, 10);
@@ -362,37 +373,38 @@ export class AuthService {
         await user.save();
 
         return {
-            message: 'Password has been reset successfully. You can now log in with your new password.'
+            message: msg.passwordResetSuccess
         };
     }
 
     // --- AUTHENTICATION ---
 
-    async login(loginData: LoginDto) {
+    async login(loginData: LoginDto, lang: AppLanguage = 'en') {
+        const msg = getMessages(lang);
         const { email, password } = loginData;
 
         const user = await this.UserModel.findOne({ email });
         if (!user) {
-            throw new UnauthorizedException('Invalid email or password.');
+            throw new UnauthorizedException(msg.invalidCredentials);
         }
 
         if (!user.password) {
-            throw new UnauthorizedException('This account was registered using Google. Please sign in with Google or reset your password.');
+            throw new UnauthorizedException(msg.googleAccountNotice);
         }
 
         const passwordMatch = await bcrypt.compare(password, user.password);
         if (!passwordMatch) {
-            throw new UnauthorizedException('Invalid email or password.');
+            throw new UnauthorizedException(msg.invalidCredentials);
         }
 
         if (!user.isVerified) {
-            throw new UnauthorizedException('Account is not verified. Please verify your email before logging in.');
+            throw new UnauthorizedException(msg.accountNotVerified);
         }
 
         const token = await this.generateUserToken(user._id);
 
         return {
-            message: 'Login successful.',
+            message: msg.loginSuccess,
             token: token.accessToken
         };
     }

@@ -8,6 +8,8 @@ import { ForgotPasswordDto } from "../dtos/forgot-password.dto.js";
 import { VerifyResetOtpDto } from "../dtos/verify-reset-otp.dto.js";
 import { ResetPasswordDto } from "../dtos/reset-password.dto.js";
 import { GoogleAuthDto } from "../dtos/google-auth.dto.js";
+import { Language } from "../../common/i18n/language.decorator.js";
+import type { AppLanguage } from "../../common/i18n/language.decorator.js";
 
 @Controller('auth')
 export class AuthController {
@@ -15,55 +17,82 @@ export class AuthController {
 
     // POST Signup
     @Post('signup')
-    async signup(@Body() signupData: SignupDto) {
-        return this.authService.signup(signupData);
+    async signup(
+        @Body() signupData: SignupDto,
+        @Language() lang: AppLanguage,
+    ) {
+        return this.authService.signup(signupData, lang);
     }
 
     // POST Verify Account OTP
     @Post('verify-otp')
-    async verifyOtp(@Body() verifyOtpData: VerifyOtpDto) {
-        return this.authService.verifyOtp(verifyOtpData);
+    async verifyOtp(
+        @Body() verifyOtpData: VerifyOtpDto,
+        @Language() lang: AppLanguage,
+    ) {
+        return this.authService.verifyOtp(verifyOtpData, lang);
     }
 
     // POST Resend Account OTP
     @Post('resend-otp')
-    async resendOtp(@Body() resendOtpData: ResendOtpDto) {
-        return this.authService.resendOtp(resendOtpData);
+    async resendOtp(
+        @Body() resendOtpData: ResendOtpDto,
+        @Language() lang: AppLanguage,
+    ) {
+        return this.authService.resendOtp(resendOtpData, lang);
     }
 
     // POST Google Register or Login
     @Post('google')
-    async googleAuth(@Body() googleAuthData: GoogleAuthDto) {
-        return this.authService.googleAuth(googleAuthData);
+    async googleAuth(
+        @Body() googleAuthData: GoogleAuthDto,
+        @Language() lang: AppLanguage,
+    ) {
+        return this.authService.googleAuth(googleAuthData, lang);
     }
 
     // POST Forgot Password (Step 1: Check email and send OTP)
     @Post('forgot-password')
-    async forgotPassword(@Body() forgotPasswordData: ForgotPasswordDto) {
-        return this.authService.forgotPassword(forgotPasswordData);
+    async forgotPassword(
+        @Body() forgotPasswordData: ForgotPasswordDto,
+        @Language() lang: AppLanguage,
+    ) {
+        return this.authService.forgotPassword(forgotPasswordData, lang);
     }
 
     // POST Resend Reset Password OTP
     @Post('resend-reset-otp')
-    async resendResetOtp(@Body() resendResetOtpData: ResendOtpDto) {
-        return this.authService.resendResetOtp(resendResetOtpData);
+    async resendResetOtp(
+        @Body() resendResetOtpData: ResendOtpDto,
+        @Language() lang: AppLanguage,
+    ) {
+        return this.authService.resendResetOtp(resendResetOtpData, lang);
     }
 
     // POST Verify Reset OTP (Step 2: Verify OTP)
     @Post('verify-reset-otp')
-    async verifyResetOtp(@Body() verifyResetOtpData: VerifyResetOtpDto) {
-        return this.authService.verifyResetOtp(verifyResetOtpData);
+    async verifyResetOtp(
+        @Body() verifyResetOtpData: VerifyResetOtpDto,
+        @Language() lang: AppLanguage,
+    ) {
+        return this.authService.verifyResetOtp(verifyResetOtpData, lang);
     }
 
     // POST Reset Password (Step 3: Change password)
     @Post('reset-password')
-    async resetPassword(@Body() resetPasswordData: ResetPasswordDto) {
-        return this.authService.resetPassword(resetPasswordData);
+    async resetPassword(
+        @Body() resetPasswordData: ResetPasswordDto,
+        @Language() lang: AppLanguage,
+    ) {
+        return this.authService.resetPassword(resetPasswordData, lang);
     }
 
     // POST Login
     @Post('login')
-    async login(@Body() loginData: LoginDto) {
-        return this.authService.login(loginData);
+    async login(
+        @Body() loginData: LoginDto,
+        @Language() lang: AppLanguage,
+    ) {
+        return this.authService.login(loginData, lang);
     }
 }

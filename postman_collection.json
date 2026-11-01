@@ -2,13 +2,18 @@
   "info": {
     "_postman_id": "a9d3e8e1-5e92-491c-b2e1-953e77a72d3f",
     "name": "Alwadih Backend API",
-    "description": "Comprehensive Postman collection for the Alwadih API including Authentication, Google Sign-in / Sign-up, Account Verification with 4-digit OTP, and Password Reset flow.",
+    "description": "Comprehensive Postman collection for the Alwadih API including Multilingual (ar/en) support, Authentication, Google Sign-in / Sign-up, Account Verification with 4-digit OTP, and Password Reset flow.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
     {
       "key": "base_url",
       "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "accept_language",
+      "value": "en",
       "type": "string"
     },
     {
@@ -30,13 +35,18 @@
           "name": "Health Check / Hello",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              }
+            ],
             "url": {
               "raw": "{{base_url}}/",
               "host": ["{{base_url}}"],
               "path": [""]
             },
-            "description": "Root endpoint to verify the API server is up and running."
+            "description": "Root endpoint to verify the API server is up and running. Returns greeting in English or Arabic depending on Accept-Language header."
           },
           "response": []
         }
@@ -53,6 +63,10 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
               }
             ],
             "body": {
@@ -64,7 +78,7 @@
               "host": ["{{base_url}}"],
               "path": ["auth", "signup"]
             },
-            "description": "Registers a new user account, securely hashes the password, generates a 4-digit verification code, and sends it via email."
+            "description": "Registers a new user account, securely hashes the password, generates a 4-digit verification code, and sends it via email in the requested language (ar/en)."
           },
           "response": []
         },
@@ -76,6 +90,10 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
               }
             ],
             "body": {
@@ -99,6 +117,10 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
               }
             ],
             "body": {
@@ -139,6 +161,10 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
               }
             ],
             "body": {
@@ -179,6 +205,10 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
               }
             ],
             "body": {
@@ -207,6 +237,10 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
               }
             ],
             "body": {
@@ -230,6 +264,10 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
               }
             ],
             "body": {
@@ -270,6 +308,10 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
               }
             ],
             "body": {
@@ -293,11 +335,15 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"user@example.com\",\n  \"newPassword\": \"NewSecretPass123!\",\n  \"resetToken\": \"{{reset_token}}\"\n}"
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"newPassword\": \"BrandNewPassword123!\",\n  \"resetToken\": \"{{reset_token}}\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/auth/reset-password",

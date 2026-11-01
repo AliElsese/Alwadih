@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import type { AppLanguage } from './common/i18n/language.decorator.js';
+import { getMessages } from './common/i18n/messages.js';
 
 @Injectable()
 export class AppService {
-  getHello(): string {
-    return 'Hello World!';
+  getHello(lang: AppLanguage = 'en'): string {
+    return getMessages(lang).helloWorld;
   }
 }
