@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import nodemailer, { Transporter } from 'nodemailer';
-import type { AppLanguage } from '../common/i18n/language.decorator.js';
+import { AppLanguage } from '../common/i18n/language.decorator.js';
 
 @Injectable()
 export class MailService {
@@ -31,7 +31,7 @@ export class MailService {
         );
     }
 
-    async sendOtpEmail(to: string, otp: string, lang: AppLanguage = 'en'): Promise<void> {
+    async sendOtpEmail(to: string, otp: string, lang: AppLanguage | 'ar' | 'en' = AppLanguage.EN): Promise<void> {
         const user = this.configService.get<string>('mail.user') || this.configService.get<string>('EMAIL_USER');
         const from = this.configService.get<string>('mail.from') || this.configService.get<string>('EMAIL_FROM') || '"Alwadih" <info.alwadih@gmail.com>';
 
@@ -41,7 +41,7 @@ export class MailService {
             return;
         }
 
-        const isArabic = lang === 'ar';
+        const isArabic = lang === AppLanguage.AR;
         const subject = isArabic ? 'رمز تأكيد الحساب الخاص بك' : 'Your Verification Code (OTP)';
 
         const html = isArabic
@@ -85,7 +85,7 @@ export class MailService {
         }
     }
 
-    async sendPasswordResetOtpEmail(to: string, otp: string, lang: AppLanguage = 'en'): Promise<void> {
+    async sendPasswordResetOtpEmail(to: string, otp: string, lang: AppLanguage | 'ar' | 'en' = AppLanguage.EN): Promise<void> {
         const user = this.configService.get<string>('mail.user') || this.configService.get<string>('EMAIL_USER');
         const from = this.configService.get<string>('mail.from') || this.configService.get<string>('EMAIL_FROM') || '"Alwadih" <info.alwadih@gmail.com>';
 
@@ -95,7 +95,7 @@ export class MailService {
             return;
         }
 
-        const isArabic = lang === 'ar';
+        const isArabic = lang === AppLanguage.AR;
         const subject = isArabic ? 'رمز إعادة تعيين كلمة المرور' : 'Password Reset Verification Code (OTP)';
 
         const html = isArabic

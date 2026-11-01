@@ -73,7 +73,7 @@ export const messages = {
 
 export type MessageKey = keyof typeof messages.en;
 
-export function getMessages(lang: AppLanguage = 'en') {
-  return messages[lang] ?? messages.en;
+export function getMessages(lang: AppLanguage | 'ar' | 'en' = AppLanguage.EN) {
+  return messages[lang as 'ar' | 'en'] ?? messages.en;
 }
 

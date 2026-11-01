@@ -1,7 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service.js';
-import { Language } from './common/i18n/language.decorator.js';
-import type { AppLanguage } from './common/i18n/language.decorator.js';
+import { AppLanguage, Language } from './common/i18n/language.decorator.js';
 
 @Controller()
 export class AppController {

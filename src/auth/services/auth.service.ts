@@ -16,7 +16,7 @@ import { ResetPasswordDto } from '../dtos/reset-password.dto.js';
 import { GoogleAuthDto } from '../dtos/google-auth.dto.js';
 import { OAuth2Client } from 'google-auth-library';
 import { ConfigService } from '@nestjs/config';
-import type { AppLanguage } from '../../common/i18n/language.decorator.js';
+import { AppLanguage } from '../../common/i18n/language.decorator.js';
 import { getMessages } from '../../common/i18n/messages.js';
 
 @Injectable()
@@ -30,7 +30,7 @@ export class AuthService {
 
     // --- REGISTRATION & ACCOUNT VERIFICATION ---
 
-    async signup(signupData: SignupDto, lang: AppLanguage = 'en') {
+    async signup(signupData: SignupDto, lang: AppLanguage | 'ar' | 'en' = AppLanguage.EN) {
         const msg = getMessages(lang);
         const { name, email, password } = signupData;
 
@@ -62,7 +62,7 @@ export class AuthService {
         };
     }
 
-    async verifyOtp(verifyOtpData: VerifyOtpDto, lang: AppLanguage = 'en') {
+    async verifyOtp(verifyOtpData: VerifyOtpDto, lang: AppLanguage | 'ar' | 'en' = AppLanguage.EN) {
         const msg = getMessages(lang);
         const { email, otp } = verifyOtpData;
 
@@ -95,7 +95,7 @@ export class AuthService {
         };
     }
 
-    async resendOtp(resendOtpData: ResendOtpDto, lang: AppLanguage = 'en') {
+    async resendOtp(resendOtpData: ResendOtpDto, lang: AppLanguage | 'ar' | 'en' = AppLanguage.EN) {
         const msg = getMessages(lang);
         const { email } = resendOtpData;
 
@@ -125,7 +125,7 @@ export class AuthService {
 
     // --- GOOGLE AUTHENTICATION (REGISTER / LOGIN) ---
 
-    private async verifyGoogleToken(token: string, lang: AppLanguage = 'en'): Promise<{
+    private async verifyGoogleToken(token: string, lang: AppLanguage | 'ar' | 'en' = AppLanguage.EN): Promise<{
         email: string;
         name: string;
         googleId: string;
@@ -195,7 +195,7 @@ export class AuthService {
         throw new UnauthorizedException(msg.googleAuthFailed);
     }
 
-    async googleAuth(googleAuthData: GoogleAuthDto, lang: AppLanguage = 'en') {
+    async googleAuth(googleAuthData: GoogleAuthDto, lang: AppLanguage | 'ar' | 'en' = AppLanguage.EN) {
         const msg = getMessages(lang);
         const token = googleAuthData.token || googleAuthData.idToken || googleAuthData.credential;
         if (!token) {
@@ -253,7 +253,7 @@ export class AuthService {
     // --- FORGOT PASSWORD FLOW ---
 
     // Step 1: Send OTP for password reset
-    async forgotPassword(forgotPasswordData: ForgotPasswordDto, lang: AppLanguage = 'en') {
+    async forgotPassword(forgotPasswordData: ForgotPasswordDto, lang: AppLanguage | 'ar' | 'en' = AppLanguage.EN) {
         const msg = getMessages(lang);
         const { email } = forgotPasswordData;
 
@@ -281,7 +281,7 @@ export class AuthService {
     }
 
     // Resend Reset Password OTP
-    async resendResetOtp(resendResetOtpData: ResendOtpDto, lang: AppLanguage = 'en') {
+    async resendResetOtp(resendResetOtpData: ResendOtpDto, lang: AppLanguage | 'ar' | 'en' = AppLanguage.EN) {
         const msg = getMessages(lang);
         const { email } = resendResetOtpData;
 
@@ -309,7 +309,7 @@ export class AuthService {
     }
 
     // Step 2: Verify reset OTP and generate a temporary reset token
-    async verifyResetOtp(verifyResetOtpData: VerifyResetOtpDto, lang: AppLanguage = 'en') {
+    async verifyResetOtp(verifyResetOtpData: VerifyResetOtpDto, lang: AppLanguage | 'ar' | 'en' = AppLanguage.EN) {
         const msg = getMessages(lang);
         const { email, otp } = verifyResetOtpData;
 
@@ -343,7 +343,7 @@ export class AuthService {
     }
 
     // Step 3: Change password
-    async resetPassword(resetPasswordData: ResetPasswordDto, lang: AppLanguage = 'en') {
+    async resetPassword(resetPasswordData: ResetPasswordDto, lang: AppLanguage | 'ar' | 'en' = AppLanguage.EN) {
         const msg = getMessages(lang);
         const { email, newPassword, resetToken } = resetPasswordData;
 
@@ -379,7 +379,7 @@ export class AuthService {
 
     // --- AUTHENTICATION ---
 
-    async login(loginData: LoginDto, lang: AppLanguage = 'en') {
+    async login(loginData: LoginDto, lang: AppLanguage | 'ar' | 'en' = AppLanguage.EN) {
         const msg = getMessages(lang);
         const { email, password } = loginData;
 
