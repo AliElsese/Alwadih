@@ -261,12 +261,13 @@ describe('AuthService - Authentication & Multilingual (ar/en) Flow', () => {
       );
     });
 
-    it('should successfully log in and return message, token, and user with name and email only', async () => {
+    it('should successfully log in and return message, token, and user data (name, email, avatar, isVerified)', async () => {
       const hashedPassword = await bcrypt.hash('Password123!', 10);
       mockUserModel.findOne.mockResolvedValue({
         _id: 'user_123',
         name: 'Ahmed Ali',
         email: 'ahmed@example.com',
+        avatar: 'https://example.com/avatar.png',
         password: hashedPassword,
         isVerified: true,
         otp: '1234',
@@ -285,6 +286,8 @@ describe('AuthService - Authentication & Multilingual (ar/en) Flow', () => {
       expect(result.user).toEqual({
         name: 'Ahmed Ali',
         email: 'ahmed@example.com',
+        avatar: 'https://example.com/avatar.png',
+        isVerified: true,
       });
       // Sensitive fields must not be leaked
       expect((result.user as any).password).toBeUndefined();

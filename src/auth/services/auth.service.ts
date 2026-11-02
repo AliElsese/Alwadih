@@ -419,6 +419,8 @@ export class AuthService {
             user: {
                 name: user.name,
                 email: user.email,
+                avatar: user.avatar,
+                isVerified: user.isVerified,
             },
         };
     }
