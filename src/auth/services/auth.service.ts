@@ -34,8 +34,8 @@ export class AuthService {
         const msg = getMessages(lang);
         const { name, email, password } = signupData;
 
-        const emailInUse = await this.UserModel.findOne({ email });
-        if (emailInUse) {
+        const existingUser = await this.UserModel.findOne({ email });
+        if (existingUser && existingUser.isVerified) {
             throw new BadRequestException(msg.accountAlreadyExists);
         }
 
@@ -45,14 +45,24 @@ export class AuthService {
         const otp = Math.floor(1000 + Math.random() * 9000).toString();
         const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
-        await this.UserModel.create({
-            name,
-            email,
-            password: hashedPassword,
-            otp,
-            otpExpiresAt,
-            isVerified: false,
-        });
+        if (existingUser) {
+            // User exists but is not verified: update details and issue new OTP
+            existingUser.name = name;
+            existingUser.password = hashedPassword;
+            existingUser.otp = otp;
+            existingUser.otpExpiresAt = otpExpiresAt;
+            await existingUser.save();
+        } else {
+            // New user registration
+            await this.UserModel.create({
+                name,
+                email,
+                password: hashedPassword,
+                otp,
+                otpExpiresAt,
+                isVerified: false,
+            });
+        }
 
         // Send OTP via email
         await this.mailService.sendOtpEmail(email, otp, lang);
@@ -405,7 +415,11 @@ export class AuthService {
 
         return {
             message: msg.loginSuccess,
-            token: token.accessToken
+            token: token.accessToken,
+            user: {
+                name: user.name,
+                email: user.email,
+            },
         };
     }
 

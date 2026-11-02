@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import * as bcrypt from 'bcrypt';
 import { AuthService } from './auth.service.js';
 import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { parseLanguage } from '../../common/i18n/language.decorator.js';
@@ -54,6 +55,85 @@ describe('AuthService - Authentication & Multilingual (ar/en) Flow', () => {
       expect(parseLanguage('en-US,en;q=0.9')).toBe('en');
       expect(parseLanguage(undefined)).toBe('en');
       expect(parseLanguage('')).toBe('en');
+    });
+  });
+
+  describe('Signup (Register) Flow', () => {
+    it('should throw BadRequestException if user already exists and is verified', async () => {
+      mockUserModel.findOne.mockResolvedValue({
+        email: 'verified@example.com',
+        isVerified: true,
+      });
+
+      await expect(
+        authService.signup(
+          { name: 'John Doe', email: 'verified@example.com', password: 'Password123!' },
+          'en',
+        ),
+      ).rejects.toThrow(
+        new BadRequestException('An account with this email address already exists.'),
+      );
+    });
+
+    it('should update unverified user and send new OTP if user exists but is not verified', async () => {
+      const existingUnverifiedUser = {
+        name: 'Old Name',
+        email: 'unverified@example.com',
+        password: 'oldhashedpassword',
+        isVerified: false,
+        otp: '1111',
+        otpExpiresAt: new Date(Date.now() - 10000),
+        save: vi.fn().mockResolvedValue(true),
+      };
+
+      mockUserModel.findOne.mockResolvedValue(existingUnverifiedUser);
+
+      const result = await authService.signup(
+        { name: 'New Name', email: 'unverified@example.com', password: 'NewPassword123!' },
+        'en',
+      );
+
+      expect(existingUnverifiedUser.name).toBe('New Name');
+      expect(existingUnverifiedUser.save).toHaveBeenCalled();
+      expect(mockMailService.sendOtpEmail).toHaveBeenCalledWith(
+        'unverified@example.com',
+        expect.any(String),
+        'en',
+      );
+      expect(mockUserModel.create).not.toHaveBeenCalled();
+      expect(result.message).toBe(
+        'Account registered successfully. A verification code has been sent to your email.',
+      );
+    });
+
+    it('should create a new user and send OTP if user does not exist', async () => {
+      mockUserModel.findOne.mockResolvedValue(null);
+      mockUserModel.create.mockResolvedValue({
+        name: 'Fresh User',
+        email: 'fresh@example.com',
+        isVerified: false,
+      });
+
+      const result = await authService.signup(
+        { name: 'Fresh User', email: 'fresh@example.com', password: 'Password123!' },
+        'ar',
+      );
+
+      expect(mockUserModel.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: 'Fresh User',
+          email: 'fresh@example.com',
+          isVerified: false,
+        }),
+      );
+      expect(mockMailService.sendOtpEmail).toHaveBeenCalledWith(
+        'fresh@example.com',
+        expect.any(String),
+        'ar',
+      );
+      expect(result.message).toBe(
+        'تم تسجيل الحساب بنجاح. تم إرسال رمز التحقق إلى بريدك الإلكتروني.',
+      );
     });
   });
 
@@ -179,6 +259,38 @@ describe('AuthService - Authentication & Multilingual (ar/en) Flow', () => {
           'تم تسجيل هذا الحساب عبر جوجل. يرجى تسجيل الدخول عبر جوجل أو طلب إعادة تعيين كلمة المرور.',
         ),
       );
+    });
+
+    it('should successfully log in and return message, token, and user with name and email only', async () => {
+      const hashedPassword = await bcrypt.hash('Password123!', 10);
+      mockUserModel.findOne.mockResolvedValue({
+        _id: 'user_123',
+        name: 'Ahmed Ali',
+        email: 'ahmed@example.com',
+        password: hashedPassword,
+        isVerified: true,
+        otp: '1234',
+        otpExpiresAt: new Date(),
+        resetToken: 'secret_token_value',
+        resetOtp: '5678',
+      });
+
+      const result = await authService.login(
+        { email: 'ahmed@example.com', password: 'Password123!' },
+        'en',
+      );
+
+      expect(result.message).toBe('Login successful.');
+      expect(result.token).toBe('mocked.jwt.token');
+      expect(result.user).toEqual({
+        name: 'Ahmed Ali',
+        email: 'ahmed@example.com',
+      });
+      // Sensitive fields must not be leaked
+      expect((result.user as any).password).toBeUndefined();
+      expect((result.user as any).otp).toBeUndefined();
+      expect((result.user as any).resetToken).toBeUndefined();
+      expect((result.user as any).resetOtp).toBeUndefined();
     });
   });
 });

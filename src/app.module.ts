@@ -29,7 +29,7 @@ import config from './config/config.js';
       }),
       inject: [ConfigService]
     }),
-    AuthModule
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
