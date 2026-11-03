@@ -1,0 +1,13 @@
+name = "quran-fonts-v2"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+# Cloudflare R2 bucket binding
+[[r2_buckets]]
+binding = "FONTS_BUCKET"
+bucket_name = "quran-fonts-v2"
+
+# Optional: If you attach a custom domain or route under your Cloudflare zone:
+# routes = [
+#   { pattern = "your-domain.com/quran/fonts/v2/*", zone_name = "your-domain.com" }
+# ]
