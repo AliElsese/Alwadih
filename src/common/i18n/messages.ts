@@ -47,6 +47,10 @@ export const messages = {
     preferencesUserRequired: 'Authentication is required to access user preferences.',
     preferencesInvalidUserId: 'Invalid user identifier.',
 
+    // User Profile
+    profileRetrievedSuccess: 'User profile retrieved successfully.',
+    profileUpdatedSuccess: 'User profile updated successfully.',
+
     // General
     helloWorld: 'Hello World!',
   },
@@ -95,6 +99,10 @@ export const messages = {
     preferencesUpdatedSuccess: 'تم تحديث إعدادات المستخدم بنجاح.',
     preferencesUserRequired: 'يجب تسجيل الدخول للوصول إلى إعدادات المستخدم.',
     preferencesInvalidUserId: 'معرف المستخدم غير صالح.',
+
+    // User Profile
+    profileRetrievedSuccess: 'تم استرجاع الملف الشخصي بنجاح.',
+    profileUpdatedSuccess: 'تم تحديث الملف الشخصي بنجاح.',
 
     // General
     helloWorld: 'مرحباً بكم في منصة الواضح!',

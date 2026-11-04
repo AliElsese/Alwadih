@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "a9d3e8e1-5e92-491c-b2e1-953e77a72d3f",
     "name": "Alwadih Backend API",
-    "description": "Comprehensive Postman collection for the Alwadih API including Multilingual (ar/en) support, Authentication, Google Sign-in / Sign-up, Account Verification with 4-digit OTP, Password Reset flow, Support Requests, and User Preferences.",
+    "description": "Comprehensive Postman collection for the Alwadih API including Multilingual (ar/en) support, Authentication, Google Sign-in / Sign-up, Account Verification with 4-digit OTP, Password Reset flow, Support Requests, User Preferences, and User Profile management.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -508,6 +508,73 @@
               ]
             },
             "description": "Partially updates user preferences via PATCH. Allowed options: fontSize ('small', 'medium', 'large', 'extra large'), appearance ('system', 'dark', 'light'), language ('ar', 'en'), sound (boolean), haptics (boolean)."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "User Profile",
+      "item": [
+        {
+          "name": "1. Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Cookie",
+                "value": "accessToken={{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/profile",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "profile"
+              ]
+            },
+            "description": "Retrieves the authenticated user's profile details (id, name, email, avatar, isVerified, createdAt, updatedAt)."
+          },
+          "response": []
+        },
+        {
+          "name": "2. Update Profile (Patch)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Cookie",
+                "value": "accessToken={{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Updated\",\n  \"email\": \"updated.user@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/profile",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "profile"
+              ]
+            },
+            "description": "Partially updates user profile fields via PATCH (name and/or email). Ensures email uniqueness across other user accounts."
           },
           "response": []
         }
