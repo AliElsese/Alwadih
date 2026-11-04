@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "a9d3e8e1-5e92-491c-b2e1-953e77a72d3f",
     "name": "Alwadih Backend API",
-    "description": "Comprehensive Postman collection for the Alwadih API including Multilingual (ar/en) support, Authentication, Google Sign-in / Sign-up, Account Verification with 4-digit OTP, and Password Reset flow.",
+    "description": "Comprehensive Postman collection for the Alwadih API including Multilingual (ar/en) support, Authentication, Google Sign-in / Sign-up, Account Verification with 4-digit OTP, Password Reset flow, Support Requests, and User Preferences.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -43,8 +43,12 @@
             ],
             "url": {
               "raw": "{{base_url}}/",
-              "host": ["{{base_url}}"],
-              "path": [""]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                ""
+              ]
             },
             "description": "Root endpoint to verify the API server is up and running. Returns greeting in English or Arabic depending on Accept-Language header."
           },
@@ -75,8 +79,13 @@
             },
             "url": {
               "raw": "{{base_url}}/auth/signup",
-              "host": ["{{base_url}}"],
-              "path": ["auth", "signup"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "signup"
+              ]
             },
             "description": "Registers a new user account, securely hashes the password, generates a 4-digit verification code, and sends it via email in the requested language (ar/en)."
           },
@@ -102,8 +111,13 @@
             },
             "url": {
               "raw": "{{base_url}}/auth/verify-otp",
-              "host": ["{{base_url}}"],
-              "path": ["auth", "verify-otp"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "verify-otp"
+              ]
             },
             "description": "Verifies the 4-digit code sent to the user's email upon signup and activates the account."
           },
@@ -129,8 +143,13 @@
             },
             "url": {
               "raw": "{{base_url}}/auth/resend-otp",
-              "host": ["{{base_url}}"],
-              "path": ["auth", "resend-otp"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "resend-otp"
+              ]
             },
             "description": "Generates a fresh 4-digit verification code and resends it to the user's email if the previous code expired or was not received."
           },
@@ -173,8 +192,13 @@
             },
             "url": {
               "raw": "{{base_url}}/auth/google",
-              "host": ["{{base_url}}"],
-              "path": ["auth", "google"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "google"
+              ]
             },
             "description": "Authenticates a user via Google/Gmail. Registers new users automatically with verified status, or logs in existing accounts, returning a signed JWT access token."
           },
@@ -217,8 +241,13 @@
             },
             "url": {
               "raw": "{{base_url}}/auth/login",
-              "host": ["{{base_url}}"],
-              "path": ["auth", "login"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
             },
             "description": "Authenticates a verified user and returns a signed JWT access token. Returns 401 Unauthorized if credentials are invalid or if the email is not verified."
           },
@@ -249,8 +278,13 @@
             },
             "url": {
               "raw": "{{base_url}}/auth/forgot-password",
-              "host": ["{{base_url}}"],
-              "path": ["auth", "forgot-password"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "forgot-password"
+              ]
             },
             "description": "Step 1 of password reset. Checks that user exists, generates a 4-digit reset code, and emails it."
           },
@@ -276,8 +310,13 @@
             },
             "url": {
               "raw": "{{base_url}}/auth/resend-reset-otp",
-              "host": ["{{base_url}}"],
-              "path": ["auth", "resend-reset-otp"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "resend-reset-otp"
+              ]
             },
             "description": "Generates a fresh 4-digit reset code and resends it if the previous one expired."
           },
@@ -320,8 +359,13 @@
             },
             "url": {
               "raw": "{{base_url}}/auth/verify-reset-otp",
-              "host": ["{{base_url}}"],
-              "path": ["auth", "verify-reset-otp"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "verify-reset-otp"
+              ]
             },
             "description": "Step 2 of password reset. Verifies the 4-digit reset code and generates a temporary resetToken valid for 15 minutes."
           },
@@ -347,10 +391,123 @@
             },
             "url": {
               "raw": "{{base_url}}/auth/reset-password",
-              "host": ["{{base_url}}"],
-              "path": ["auth", "reset-password"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "reset-password"
+              ]
             },
             "description": "Step 3 of password reset. Changes user password using the resetToken obtained in Step 2. Automatically invalidates reset tokens once completed."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Support Requests",
+      "item": [
+        {
+          "name": "1. Create Support Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Cookie",
+                "value": "accessToken={{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category\": \"suggestion\",\n  \"message\": \"Please add more reciters and customizable bookmarks.\",\n  \"idempotencyKey\": \"req-uuid-12345\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/support/create",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "support",
+                "create"
+              ]
+            },
+            "description": "Creates a new support request for the authenticated user. Supported categories: 'suggestion', 'technical_issue', 'note'. Supports optional 'idempotencyKey' for duplicate request protection."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "User Preferences",
+      "item": [
+        {
+          "name": "1. Get Preferences",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Cookie",
+                "value": "accessToken={{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/preferences",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "preferences"
+              ]
+            },
+            "description": "Retrieves the authenticated user's preferences. Returns defaults (medium font size, system appearance, ar language, sound true, haptics true) if none exist yet."
+          },
+          "response": []
+        },
+        {
+          "name": "2. Update Preferences (Patch)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Cookie",
+                "value": "accessToken={{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fontSize\": \"large\",\n  \"appearance\": \"dark\",\n  \"language\": \"ar\",\n  \"sound\": true,\n  \"haptics\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/preferences",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "preferences"
+              ]
+            },
+            "description": "Partially updates user preferences via PATCH. Allowed options: fontSize ('small', 'medium', 'large', 'extra large'), appearance ('system', 'dark', 'light'), language ('ar', 'en'), sound (boolean), haptics (boolean)."
           },
           "response": []
         }
