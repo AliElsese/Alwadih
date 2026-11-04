@@ -32,6 +32,15 @@ export const messages = {
     accountNotVerified: 'Account is not verified. Please verify your email before logging in.',
     loginSuccess: 'Login successful.',
 
+    // Support Requests
+    supportAuthRequired: 'Authentication is required to submit a support request.',
+    supportInvalidUserId: 'Invalid user identifier.',
+    supportSubmittedSuccess: 'Support request submitted successfully.',
+    supportDuplicateRetrieved: 'Previous support request retrieved successfully.',
+    supportDuplicateDetected: 'Duplicate support request detected.',
+    supportInvalidPayload: 'Invalid support request payload.',
+    supportSaveFailed: 'An error occurred while saving your support request. Please try again later.',
+
     // General
     helloWorld: 'Hello World!',
   },
@@ -65,6 +74,15 @@ export const messages = {
     googleAccountNotice: 'تم تسجيل هذا الحساب عبر جوجل. يرجى تسجيل الدخول عبر جوجل أو طلب إعادة تعيين كلمة المرور.',
     accountNotVerified: 'الحساب غير مفعل. يرجى تأكيد بريدك الإلكتروني أولاً لتسجيل الدخول.',
     loginSuccess: 'تم تسجيل الدخول بنجاح.',
+
+    // Support Requests
+    supportAuthRequired: 'يجب تسجيل الدخول لإرسال طلب الدعم.',
+    supportInvalidUserId: 'معرف المستخدم غير صالح.',
+    supportSubmittedSuccess: 'تم إرسال طلب الدعم بنجاح.',
+    supportDuplicateRetrieved: 'تم استرجاع طلب الدعم السابق بنجاح.',
+    supportDuplicateDetected: 'طلب دعم مكرر تم إرساله بالفعل.',
+    supportInvalidPayload: 'بيانات طلب الدعم غير صالحة.',
+    supportSaveFailed: 'حدث خطأ أثناء حفظ طلب الدعم. يرجى المحاولة لاحقاً.',
 
     // General
     helloWorld: 'مرحباً بكم في منصة الواضح!',

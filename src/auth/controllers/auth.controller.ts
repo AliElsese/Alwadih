@@ -9,7 +9,9 @@ import { VerifyResetOtpDto } from "../dtos/verify-reset-otp.dto.js";
 import { ResetPasswordDto } from "../dtos/reset-password.dto.js";
 import { GoogleAuthDto } from "../dtos/google-auth.dto.js";
 import { AppLanguage, Language } from "../../common/i18n/language.decorator.js";
+import { Public } from "../decorators/public.decorator.js";
 
+@Public()
 @Controller('auth')
 export class AuthController {
     constructor(private readonly authService: AuthService) { }
