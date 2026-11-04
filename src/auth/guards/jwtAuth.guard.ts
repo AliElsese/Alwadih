@@ -22,10 +22,10 @@ export class JwtAuthGuard implements CanActivate {
             return true;
         }
 
-        // Extract access token from cookies
-        const token = request.cookies?.accessToken;
+        // Extract access token from Authorization header
+        const token = this.extractTokenFromHeader(request);
         if (!token) {
-            throw new UnauthorizedException("No access token provided in cookies")
+            throw new UnauthorizedException("No access token provided in headers");
         }
 
         // Verify the token
@@ -33,6 +33,20 @@ export class JwtAuthGuard implements CanActivate {
         request.user = tokenPayload;
 
         return true;
+    }
+
+    private extractTokenFromHeader(request: any): string | undefined {
+        const authHeader = request.headers?.authorization;
+        if (!authHeader) {
+            return undefined;
+        }
+
+        const [type, token] = authHeader.split(' ');
+        if (type === 'Bearer' && token) {
+            return token;
+        }
+
+        return token || authHeader;
     }
 
     private verifyToken(token: string): any {

@@ -422,8 +422,8 @@
                 "value": "{{accept_language}}"
               },
               {
-                "key": "Cookie",
-                "value": "accessToken={{jwt_token}}"
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
               }
             ],
             "body": {
@@ -459,8 +459,8 @@
                 "value": "{{accept_language}}"
               },
               {
-                "key": "Cookie",
-                "value": "accessToken={{jwt_token}}"
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
               }
             ],
             "url": {
@@ -490,8 +490,8 @@
                 "value": "{{accept_language}}"
               },
               {
-                "key": "Cookie",
-                "value": "accessToken={{jwt_token}}"
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
               }
             ],
             "body": {
@@ -526,8 +526,8 @@
                 "value": "{{accept_language}}"
               },
               {
-                "key": "Cookie",
-                "value": "accessToken={{jwt_token}}"
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
               }
             ],
             "url": {
@@ -557,8 +557,8 @@
                 "value": "{{accept_language}}"
               },
               {
-                "key": "Cookie",
-                "value": "accessToken={{jwt_token}}"
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
               }
             ],
             "body": {
