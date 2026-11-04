@@ -1,24 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { User } from '../../auth/schemas/user.schema.js';
-
-export enum FontSize {
-    SMALL = 'small',
-    MEDIUM = 'medium',
-    LARGE = 'large',
-    EXTRA_LARGE = 'extra large',
-}
-
-export enum Appearance {
-    SYSTEM = 'system',
-    DARK = 'dark',
-    LIGHT = 'light',
-}
-
-export enum AppPreferenceLanguage {
-    AR = 'ar',
-    EN = 'en',
-}
+import { Appearance, AppPreferenceLanguage, FontSize } from '../enums/preferences.enum.js';
 
 @Schema({ timestamps: true })
 export class Preference extends Document {

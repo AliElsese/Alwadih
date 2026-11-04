@@ -1,9 +1,5 @@
 import { IsBoolean, IsEnum, IsOptional } from 'class-validator';
-import {
-    Appearance,
-    AppPreferenceLanguage,
-    FontSize,
-} from '../schemas/preferences.schema.js';
+import { Appearance, AppPreferenceLanguage, FontSize } from '../enums/preferences.enum.js';
 
 export class UpdatePreferencesDto {
     @IsOptional()

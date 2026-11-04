@@ -1,6 +1,7 @@
 import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { SupportRequest, SupportStatus } from '../schemas/support-request.schema.js';
+import { SupportRequest } from '../schemas/support-request.schema.js';
+import { SupportStatus } from '../enums/support.enum.js';
 import { Model, Types } from 'mongoose';
 import { CreateSupportRequestDto } from '../dtos/create-support-request.dto.js';
 import { AppLanguage } from '../../common/i18n/language.decorator.js';
@@ -81,28 +82,6 @@ export class SupportService {
             // Safe fallback without exposing internal DB details
             throw new InternalServerErrorException(msg.supportSaveFailed);
         }
-    }
-
-    /**
-     * Alias matching supportCreateService
-     */
-    async supportCreateService(
-        createSupportRequestDto: CreateSupportRequestDto,
-        userId: string | Types.ObjectId,
-        lang: AppLanguage | 'ar' | 'en' = AppLanguage.EN,
-    ) {
-        return this.createSupportRequest(createSupportRequestDto, userId, lang);
-    }
-
-    /**
-     * Alias matching create
-     */
-    async create(
-        createSupportRequestDto: CreateSupportRequestDto,
-        userId: string | Types.ObjectId,
-        lang: AppLanguage | 'ar' | 'en' = AppLanguage.EN,
-    ) {
-        return this.createSupportRequest(createSupportRequestDto, userId, lang);
     }
 
     private formatResponse(request: SupportRequest, message: string) {

@@ -1,19 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { User } from '../../auth/schemas/user.schema.js';
-
-export enum SupportCategory {
-    SUGGESTION = 'suggestion',
-    TECHNICAL_ISSUE = 'technical_issue',
-    NOTE = 'note',
-}
-
-export enum SupportStatus {
-    OPEN = 'open',
-    IN_PROGRESS = 'in_progress',
-    RESOLVED = 'resolved',
-    CLOSED = 'closed',
-}
+import { SupportCategory, SupportStatus } from '../enums/support.enum.js';
 
 export const SUPPORT_MESSAGE_MIN_LENGTH = 10;
 export const SUPPORT_MESSAGE_MAX_LENGTH = 3000;

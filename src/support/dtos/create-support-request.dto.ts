@@ -1,9 +1,6 @@
 import { IsEnum, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
-import {
-    SupportCategory,
-    SUPPORT_MESSAGE_MAX_LENGTH,
-    SUPPORT_MESSAGE_MIN_LENGTH,
-} from "../schemas/support-request.schema.js";
+import { SupportCategory } from "../enums/support.enum.js";
+import { SUPPORT_MESSAGE_MAX_LENGTH, SUPPORT_MESSAGE_MIN_LENGTH } from "../schemas/support-request.schema.js";
 
 export class CreateSupportRequestDto {
     @IsEnum(SupportCategory, {
