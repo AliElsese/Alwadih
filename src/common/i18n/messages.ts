@@ -41,6 +41,12 @@ export const messages = {
     supportInvalidPayload: 'Invalid support request payload.',
     supportSaveFailed: 'An error occurred while saving your support request. Please try again later.',
 
+    // User Preferences
+    preferencesRetrievedSuccess: 'User preferences retrieved successfully.',
+    preferencesUpdatedSuccess: 'User preferences updated successfully.',
+    preferencesUserRequired: 'Authentication is required to access user preferences.',
+    preferencesInvalidUserId: 'Invalid user identifier.',
+
     // General
     helloWorld: 'Hello World!',
   },
@@ -83,6 +89,12 @@ export const messages = {
     supportDuplicateDetected: 'طلب دعم مكرر تم إرساله بالفعل.',
     supportInvalidPayload: 'بيانات طلب الدعم غير صالحة.',
     supportSaveFailed: 'حدث خطأ أثناء حفظ طلب الدعم. يرجى المحاولة لاحقاً.',
+
+    // User Preferences
+    preferencesRetrievedSuccess: 'تم استرجاع إعدادات المستخدم بنجاح.',
+    preferencesUpdatedSuccess: 'تم تحديث إعدادات المستخدم بنجاح.',
+    preferencesUserRequired: 'يجب تسجيل الدخول للوصول إلى إعدادات المستخدم.',
+    preferencesInvalidUserId: 'معرف المستخدم غير صالح.',
 
     // General
     helloWorld: 'مرحباً بكم في منصة الواضح!',
