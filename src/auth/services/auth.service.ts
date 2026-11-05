@@ -18,6 +18,7 @@ import { OAuth2Client } from 'google-auth-library';
 import { ConfigService } from '@nestjs/config';
 import { AppLanguage } from '../../common/i18n/language.decorator.js';
 import { getMessages } from '../../common/i18n/messages.js';
+import { UserRole } from '../enums/auth.enum.js';
 
 @Injectable()
 export class AuthService {
@@ -29,7 +30,6 @@ export class AuthService {
     ) { }
 
     // --- REGISTRATION & ACCOUNT VERIFICATION ---
-
     async signup(signupData: SignupDto, lang: AppLanguage | 'ar' | 'en' = AppLanguage.EN) {
         const msg = getMessages(lang);
         const { name, email, password } = signupData;
@@ -58,6 +58,7 @@ export class AuthService {
                 name,
                 email,
                 password: hashedPassword,
+                role: UserRole.USER,
                 otp,
                 otpExpiresAt,
                 isVerified: false,
@@ -134,7 +135,6 @@ export class AuthService {
     }
 
     // --- GOOGLE AUTHENTICATION (REGISTER / LOGIN) ---
-
     private async verifyGoogleToken(token: string, lang: AppLanguage | 'ar' | 'en' = AppLanguage.EN): Promise<{
         email: string;
         name: string;
@@ -245,7 +245,7 @@ export class AuthService {
             }
         }
 
-        const jwt = await this.generateUserToken(user._id);
+        const jwt = await this.generateUserToken(user._id, user.role);
 
         return {
             message: msg.googleAuthSuccess,
@@ -411,7 +411,7 @@ export class AuthService {
             throw new UnauthorizedException(msg.accountNotVerified);
         }
 
-        const token = await this.generateUserToken(user._id);
+        const token = await this.generateUserToken(user._id, user.role);
 
         return {
             message: msg.loginSuccess,
@@ -425,8 +425,8 @@ export class AuthService {
         };
     }
 
-    async generateUserToken(userId: any) {
-        const accessToken = this.jwtService.sign({ userId }, { expiresIn: '1d' });
+    async generateUserToken(userId: any, role: UserRole = UserRole.USER) {
+        const accessToken = role === UserRole.USER ? this.jwtService.sign({ userId, role }, { expiresIn: '1d' }) : this.jwtService.sign({ userId, role }, { expiresIn: '30m' });
 
         return {
             accessToken

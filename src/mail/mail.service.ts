@@ -85,6 +85,59 @@ export class MailService {
         }
     }
 
+    async sendAdminLoginOtpEmail(to: string, otp: string, lang: AppLanguage | 'ar' | 'en' = AppLanguage.EN): Promise<void> {
+        const user = this.configService.get<string>('mail.user') || this.configService.get<string>('EMAIL_USER');
+        const from = this.configService.get<string>('mail.from') || this.configService.get<string>('EMAIL_FROM') || '"Alwadih" <info.alwadih@gmail.com>';
+
+        if (!user) {
+            this.logger.warn(`EMAIL_USER is not set in .env. Here is the Admin Login OTP for ${to}: [ ${otp} ]`);
+            return;
+        }
+
+        const isArabic = lang === AppLanguage.AR;
+        const subject = isArabic ? 'رمز التحقق لتسجيل دخول المشرف' : 'Admin Login Verification Code (OTP)';
+
+        const html = isArabic
+            ? `
+                <div dir="rtl" style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px; border: 1px solid #dbeafe; border-radius: 8px; text-align: right;">
+                    <h2 style="color: #1e40af; text-align: center; margin-bottom: 8px;">تسجيل دخول المشرف</h2>
+                    <p style="color: #4a5568; font-size: 15px;">مرحباً،</p>
+                    <p style="color: #4a5568; font-size: 15px;">استخدم رمز التحقق التالي لإتمام تسجيل الدخول إلى لوحة التحكم:</p>
+                    <div style="text-align: center; margin: 28px 0;">
+                        <span style="display: inline-block; font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #1e40af; background-color: #eff6ff; padding: 12px 24px; border-radius: 8px; border: 1px dashed #93c5fd;">
+                            ${otp}
+                        </span>
+                    </div>
+                    <p style="color: #718096; font-size: 13px; text-align: center;">صلاحية هذا الرمز <strong>10 دقائق</strong>. إذا لم تكن قد طلبت تسجيل الدخول، يرجى تأمين حسابك فوراً.</p>
+                </div>
+            `
+            : `
+                <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px; border: 1px solid #dbeafe; border-radius: 8px;">
+                    <h2 style="color: #1e40af; text-align: center; margin-bottom: 8px;">Admin Login Verification</h2>
+                    <p style="color: #4a5568; font-size: 15px;">Hello,</p>
+                    <p style="color: #4a5568; font-size: 15px;">Use the following verification code to complete your admin login:</p>
+                    <div style="text-align: center; margin: 28px 0;">
+                        <span style="display: inline-block; font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #1e40af; background-color: #eff6ff; padding: 12px 24px; border-radius: 8px; border: 1px dashed #93c5fd;">
+                            ${otp}
+                        </span>
+                    </div>
+                    <p style="color: #718096; font-size: 13px; text-align: center;">This code will expire in <strong>10 minutes</strong>. If you did not attempt to log in, please secure your account immediately.</p>
+                </div>
+            `;
+
+        try {
+            await this.transporter.sendMail({
+                from,
+                to,
+                subject,
+                html,
+            });
+            this.logger.log(`Admin login OTP successfully sent to ${to}`);
+        } catch (error) {
+            this.logger.error(`Failed to send Admin login OTP to ${to}:`, error);
+        }
+    }
+
     async sendPasswordResetOtpEmail(to: string, otp: string, lang: AppLanguage | 'ar' | 'en' = AppLanguage.EN): Promise<void> {
         const user = this.configService.get<string>('mail.user') || this.configService.get<string>('EMAIL_USER');
         const from = this.configService.get<string>('mail.from') || this.configService.get<string>('EMAIL_FROM') || '"Alwadih" <info.alwadih@gmail.com>';

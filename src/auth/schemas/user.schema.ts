@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document } from "mongoose";
+import { UserRole } from "../enums/auth.enum.js";
 
 @Schema({ timestamps: true })
 export class User extends Document {
@@ -11,6 +12,14 @@ export class User extends Document {
 
     @Prop({ required: false })
     password?: string;
+
+    @Prop({
+        type: String,
+        enum: Object.values(UserRole),
+        default: UserRole.USER,
+        index: true,
+    })
+    role: UserRole;
 
     @Prop({ required: false })
     googleId?: string;
