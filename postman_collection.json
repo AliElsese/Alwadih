@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "a9d3e8e1-5e92-491c-b2e1-953e77a72d3f",
     "name": "Alwadih Backend API",
-    "description": "Comprehensive Postman collection for the Alwadih API including Multilingual (ar/en) support, Authentication, Google Sign-in / Sign-up, Account Verification with 4-digit OTP, Password Reset flow, Support Requests, User Preferences, and User Profile management.",
+    "description": "Comprehensive Postman collection for the Alwadih API including Multilingual (ar/en) support, User & Admin Authentication (with 2FA OTP), Password Reset flows, Support Requests, User Preferences, User Profile management, and Public Content (FAQ & Privacy Policy).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -250,6 +250,276 @@
               ]
             },
             "description": "Authenticates a verified user and returns a signed JWT access token. Returns 401 Unauthorized if credentials are invalid or if the email is not verified."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin Authentication",
+      "item": [
+        {
+          "name": "1. Admin Login (Step 1: Check Credentials & Send 2FA OTP)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"AdminSecret123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/admin/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "admin",
+                "login"
+              ]
+            },
+            "description": "Validates administrator credentials and triggers a 4-digit 2FA login verification code sent via email. Does not return an access token."
+          },
+          "response": []
+        },
+        {
+          "name": "2. Verify Admin Login 2FA OTP (Step 2: Get Token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "    var data = pm.response.json();",
+                  "    if (data.token) {",
+                  "        pm.collectionVariables.set('jwt_token', data.token);",
+                  "        console.log('Admin jwt_token saved to collection variables');",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"otp\": \"1234\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/admin/verify-otp",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "admin",
+                "verify-otp"
+              ]
+            },
+            "description": "Verifies the 4-digit admin 2FA login code and returns a signed JWT access token (30-minute expiry) with the admin role."
+          },
+          "response": []
+        },
+        {
+          "name": "3. Resend Admin Login 2FA OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/admin/resend-otp",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "admin",
+                "resend-otp"
+              ]
+            },
+            "description": "Generates a fresh 4-digit 2FA login verification code and emails it to the admin."
+          },
+          "response": []
+        },
+        {
+          "name": "4. Admin Forgot Password (Request Reset OTP)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/admin/forgot-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "admin",
+                "forgot-password"
+              ]
+            },
+            "description": "Step 1 of Admin Password Reset. Generates a 4-digit reset code and emails it to the admin."
+          },
+          "response": []
+        },
+        {
+          "name": "5. Resend Admin Reset OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/admin/resend-reset-otp",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "admin",
+                "resend-reset-otp"
+              ]
+            },
+            "description": "Resends the 4-digit password reset code to the admin."
+          },
+          "response": []
+        },
+        {
+          "name": "6. Verify Admin Reset OTP",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "    var data = pm.response.json();",
+                  "    if (data.resetToken) {",
+                  "        pm.collectionVariables.set('reset_token', data.resetToken);",
+                  "        console.log('Admin reset_token saved to collection variables');",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"otp\": \"1234\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/admin/verify-reset-otp",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "admin",
+                "verify-reset-otp"
+              ]
+            },
+            "description": "Step 2 of Admin Password Reset. Validates the reset code and issues a temporary reset token valid for 15 minutes."
+          },
+          "response": []
+        },
+        {
+          "name": "7. Admin Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"newPassword\": \"NewAdminSecret123!\",\n  \"resetToken\": \"{{reset_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/admin/reset-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "admin",
+                "reset-password"
+              ]
+            },
+            "description": "Step 3 of Admin Password Reset. Sets the new password using the valid resetToken."
           },
           "response": []
         }
@@ -575,6 +845,75 @@
               ]
             },
             "description": "Partially updates user profile fields via PATCH (name and/or email). Ensures email uniqueness across other user accounts."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Content (FAQ & Privacy Policy)",
+      "item": [
+        {
+          "name": "1. Get FAQs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/content/faq?locale=ar",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "content",
+                "faq"
+              ],
+              "query": [
+                {
+                  "key": "locale",
+                  "value": "ar",
+                  "description": "Supported locales: ar, en"
+                }
+              ]
+            },
+            "description": "Public endpoint to retrieve published FAQ entries for the specified locale, returned in defined display order with safe structured text and links."
+          },
+          "response": []
+        },
+        {
+          "name": "2. Get Privacy Policy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/content/privacy-policy?locale=ar",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "content",
+                "privacy-policy"
+              ],
+              "query": [
+                {
+                  "key": "locale",
+                  "value": "ar",
+                  "description": "Supported locales: ar, en"
+                }
+              ]
+            },
+            "description": "Public endpoint to retrieve the latest published Privacy Policy for the specified locale, including version, effective date, and structured safe sections."
           },
           "response": []
         }

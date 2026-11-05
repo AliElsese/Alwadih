@@ -53,6 +53,13 @@ export const messages = {
     profileRetrievedSuccess: 'User profile retrieved successfully.',
     profileUpdatedSuccess: 'User profile updated successfully.',
 
+    // Content APIs (FAQ & Privacy Policy)
+    faqRetrievedSuccess: 'FAQs retrieved successfully.',
+    faqEmpty: 'No published FAQs found for the requested locale.',
+    privacyPolicyRetrievedSuccess: 'Privacy policy retrieved successfully.',
+    privacyPolicyNotFound: 'No published privacy policy found for the requested locale.',
+    unsupportedLocale: 'Unsupported locale. Supported locales are "ar" and "en".',
+
     // General
     helloWorld: 'Hello World!',
   },
@@ -107,6 +114,13 @@ export const messages = {
     // User Profile
     profileRetrievedSuccess: 'تم استرجاع الملف الشخصي بنجاح.',
     profileUpdatedSuccess: 'تم تحديث الملف الشخصي بنجاح.',
+
+    // Content APIs (FAQ & Privacy Policy)
+    faqRetrievedSuccess: 'تم استرجاع الأسئلة الشائعة بنجاح.',
+    faqEmpty: 'لم يتم العثور على أي أسئلة شائعة منشورة لهذه اللغة.',
+    privacyPolicyRetrievedSuccess: 'تم استرجاع سياسة الخصوصية بنجاح.',
+    privacyPolicyNotFound: 'لم يتم العثور على سياسة خصوصية منشورة لهذه اللغة.',
+    unsupportedLocale: 'اللغة المطلوبة غير مدعومة. اللغات المدعومة هي "ar" و "en".',
 
     // General
     helloWorld: 'مرحباً بكم في منصة الواضح!',
