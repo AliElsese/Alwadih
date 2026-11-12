@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "a9d3e8e1-5e92-491c-b2e1-953e77a72d3f",
     "name": "Alwadih Backend API",
-    "description": "Comprehensive Postman collection for the Alwadih API including Multilingual (ar/en) support, User & Admin Authentication (with 2FA OTP), Password Reset flows, Support Requests, User Preferences, User Profile management, Public Content (FAQ & Privacy Policy), and Admin-only Parts & Units CRUD.",
+    "description": "Comprehensive Postman collection for the Alwadih API including Multilingual (ar/en) support, User & Admin Authentication (with 2FA OTP), Password Reset flows, Support Requests, User Preferences, User Profile management, Public Content (FAQ & Privacy Policy), and Admin-only Parts, Units & Lessons CRUD.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -33,6 +33,11 @@
     },
     {
       "key": "unit_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "lesson_id",
       "value": "",
       "type": "string"
     }
@@ -1310,6 +1315,216 @@
               ]
             },
             "description": "Admin-only endpoint to delete a unit by its MongoDB ObjectId."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Lessons (Admin Only)",
+      "item": [
+        {
+          "name": "1. Create Lesson",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "    var data = pm.response.json();",
+                  "    if (data.lesson && data.lesson.id) {",
+                  "        pm.collectionVariables.set('lesson_id', data.lesson.id);",
+                  "        console.log('lesson_id saved to collection variables:', data.lesson.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nameAr\": \"الدرس الأول\",\n  \"nameEn\": \"Lesson 1\",\n  \"days\": 5,\n  \"unitId\": \"{{unit_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/lessons",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lessons"
+              ]
+            },
+            "description": "Admin-only endpoint to create a new lesson linked to an existing Unit (1-to-Many relationship)."
+          },
+          "response": []
+        },
+        {
+          "name": "2. Get All Lessons",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/lessons",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lessons"
+              ]
+            },
+            "description": "Admin-only endpoint to retrieve all lessons with populated parent Unit details."
+          },
+          "response": []
+        },
+        {
+          "name": "3. Get Lessons By Unit ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/lessons?unitId={{unit_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lessons"
+              ],
+              "query": [
+                {
+                  "key": "unitId",
+                  "value": "{{unit_id}}",
+                  "description": "Filter lessons belonging to a specific Unit ID"
+                }
+              ]
+            },
+            "description": "Admin-only endpoint to retrieve all lessons belonging to a specific Unit."
+          },
+          "response": []
+        },
+        {
+          "name": "4. Get Lesson By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/lessons/{{lesson_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lessons",
+                "{{lesson_id}}"
+              ]
+            },
+            "description": "Admin-only endpoint to retrieve a single lesson by its MongoDB ObjectId."
+          },
+          "response": []
+        },
+        {
+          "name": "5. Update Lesson (Patch)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nameAr\": \"الدرس الأول - محدث\",\n  \"nameEn\": \"Lesson 1 Updated\",\n  \"days\": 7\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/lessons/{{lesson_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lessons",
+                "{{lesson_id}}"
+              ]
+            },
+            "description": "Admin-only endpoint to partially update a lesson's fields or reassign it to another existing Unit."
+          },
+          "response": []
+        },
+        {
+          "name": "6. Delete Lesson",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/lessons/{{lesson_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lessons",
+                "{{lesson_id}}"
+              ]
+            },
+            "description": "Admin-only endpoint to delete a lesson by its MongoDB ObjectId."
           },
           "response": []
         }

@@ -80,6 +80,16 @@ export const messages = {
     unitAlreadyExists: 'A unit with this Arabic or English label already exists in this part.',
     invalidUnitId: 'Invalid unit identifier.',
 
+    // Lessons
+    lessonCreatedSuccess: 'Lesson created successfully.',
+    lessonsRetrievedSuccess: 'Lessons retrieved successfully.',
+    lessonRetrievedSuccess: 'Lesson retrieved successfully.',
+    lessonUpdatedSuccess: 'Lesson updated successfully.',
+    lessonDeletedSuccess: 'Lesson deleted successfully.',
+    lessonNotFound: 'Lesson not found.',
+    lessonAlreadyExists: 'A lesson with this Arabic or English name already exists in this unit.',
+    invalidLessonId: 'Invalid lesson identifier.',
+
     // General
     helloWorld: 'Hello World!',
   },
@@ -161,6 +171,16 @@ export const messages = {
     unitNotFound: 'لم يتم العثور على الوحدة المطلوبة.',
     unitAlreadyExists: 'توجد وحدة مسجلة بالفعل بهذا الاسم العربي أو الإنجليزي في هذا الجزء.',
     invalidUnitId: 'معرف الوحدة غير صالح.',
+
+    // Lessons
+    lessonCreatedSuccess: 'تم إضافة الدرس بنجاح.',
+    lessonsRetrievedSuccess: 'تم استرجاع الدروس بنجاح.',
+    lessonRetrievedSuccess: 'تم استرجاع الدرس بنجاح.',
+    lessonUpdatedSuccess: 'تم تحديث الدرس بنجاح.',
+    lessonDeletedSuccess: 'تم حذف الدرس بنجاح.',
+    lessonNotFound: 'لم يتم العثور على الدرس المطلوب.',
+    lessonAlreadyExists: 'يوجد درس مسجل بالفعل بهذا الاسم العربي أو الإنجليزي في هذه الوحدة.',
+    invalidLessonId: 'معرف الدرس غير صالح.',
 
     // General
     helloWorld: 'مرحباً بكم في منصة الواضح!',
