@@ -60,6 +60,16 @@ export const messages = {
     privacyPolicyNotFound: 'No published privacy policy found for the requested locale.',
     unsupportedLocale: 'Unsupported locale. Supported locales are "ar" and "en".',
 
+    // Parts
+    partCreatedSuccess: 'Part created successfully.',
+    partsRetrievedSuccess: 'Parts retrieved successfully.',
+    partRetrievedSuccess: 'Part retrieved successfully.',
+    partUpdatedSuccess: 'Part updated successfully.',
+    partDeletedSuccess: 'Part deleted successfully.',
+    partNotFound: 'Part not found.',
+    partAlreadyExists: 'A part with this Arabic or English name already exists.',
+    invalidPartId: 'Invalid part identifier.',
+
     // General
     helloWorld: 'Hello World!',
   },
@@ -122,6 +132,16 @@ export const messages = {
     privacyPolicyNotFound: 'لم يتم العثور على سياسة خصوصية منشورة لهذه اللغة.',
     unsupportedLocale: 'اللغة المطلوبة غير مدعومة. اللغات المدعومة هي "ar" و "en".',
 
+    // Parts
+    partCreatedSuccess: 'تم إضافة الجزء بنجاح.',
+    partsRetrievedSuccess: 'تم استرجاع الأجزاء بنجاح.',
+    partRetrievedSuccess: 'تم استرجاع الجزء بنجاح.',
+    partUpdatedSuccess: 'تم تحديث الجزء بنجاح.',
+    partDeletedSuccess: 'تم حذف الجزء بنجاح.',
+    partNotFound: 'لم يتم العثور على الجزء المطلوب.',
+    partAlreadyExists: 'يوجد جزء مسجل بالفعل بهذا الاسم العربي أو الإنجليزي.',
+    invalidPartId: 'معرف الجزء غير صالح.',
+
     // General
     helloWorld: 'مرحباً بكم في منصة الواضح!',
   },
@@ -132,4 +152,3 @@ export type MessageKey = keyof typeof messages.en;
 export function getMessages(lang: AppLanguage | 'ar' | 'en' = AppLanguage.EN) {
   return messages[lang as 'ar' | 'en'] ?? messages.en;
 }
-

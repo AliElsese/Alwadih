@@ -10,6 +10,7 @@ import { SupportModule } from './support/support.module.js';
 import { PreferencesModule } from './preferences/preferences.module.js';
 import { ProfileModule } from './profile/profile.module.js';
 import { ContentModule } from './content/content.module.js';
+import { PartModule } from './parts/part.module.js';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guards/jwtAuth.guard.js';
 
@@ -40,6 +41,7 @@ import { JwtAuthGuard } from './auth/guards/jwtAuth.guard.js';
     PreferencesModule,
     ProfileModule,
     ContentModule,
+    PartModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: JwtAuthGuard }],
