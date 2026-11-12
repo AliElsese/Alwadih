@@ -70,6 +70,16 @@ export const messages = {
     partAlreadyExists: 'A part with this Arabic or English name already exists.',
     invalidPartId: 'Invalid part identifier.',
 
+    // Units
+    unitCreatedSuccess: 'Unit created successfully.',
+    unitsRetrievedSuccess: 'Units retrieved successfully.',
+    unitRetrievedSuccess: 'Unit retrieved successfully.',
+    unitUpdatedSuccess: 'Unit updated successfully.',
+    unitDeletedSuccess: 'Unit deleted successfully.',
+    unitNotFound: 'Unit not found.',
+    unitAlreadyExists: 'A unit with this Arabic or English label already exists in this part.',
+    invalidUnitId: 'Invalid unit identifier.',
+
     // General
     helloWorld: 'Hello World!',
   },
@@ -141,6 +151,16 @@ export const messages = {
     partNotFound: 'لم يتم العثور على الجزء المطلوب.',
     partAlreadyExists: 'يوجد جزء مسجل بالفعل بهذا الاسم العربي أو الإنجليزي.',
     invalidPartId: 'معرف الجزء غير صالح.',
+
+    // Units
+    unitCreatedSuccess: 'تم إضافة الوحدة بنجاح.',
+    unitsRetrievedSuccess: 'تم استرجاع الوحدات بنجاح.',
+    unitRetrievedSuccess: 'تم استرجاع الوحدة بنجاح.',
+    unitUpdatedSuccess: 'تم تحديث الوحدة بنجاح.',
+    unitDeletedSuccess: 'تم حذف الوحدة بنجاح.',
+    unitNotFound: 'لم يتم العثور على الوحدة المطلوبة.',
+    unitAlreadyExists: 'توجد وحدة مسجلة بالفعل بهذا الاسم العربي أو الإنجليزي في هذا الجزء.',
+    invalidUnitId: 'معرف الوحدة غير صالح.',
 
     // General
     helloWorld: 'مرحباً بكم في منصة الواضح!',

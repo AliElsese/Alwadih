@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "a9d3e8e1-5e92-491c-b2e1-953e77a72d3f",
     "name": "Alwadih Backend API",
-    "description": "Comprehensive Postman collection for the Alwadih API including Multilingual (ar/en) support, User & Admin Authentication (with 2FA OTP), Password Reset flows, Support Requests, User Preferences, User Profile management, Public Content (FAQ & Privacy Policy), and Admin-only Parts CRUD.",
+    "description": "Comprehensive Postman collection for the Alwadih API including Multilingual (ar/en) support, User & Admin Authentication (with 2FA OTP), Password Reset flows, Support Requests, User Preferences, User Profile management, Public Content (FAQ & Privacy Policy), and Admin-only Parts & Units CRUD.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -28,6 +28,11 @@
     },
     {
       "key": "part_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "unit_id",
       "value": "",
       "type": "string"
     }
@@ -1095,6 +1100,216 @@
               ]
             },
             "description": "Admin-only endpoint to delete a part by its MongoDB ObjectId."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Units (Admin Only)",
+      "item": [
+        {
+          "name": "1. Create Unit",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "    var data = pm.response.json();",
+                  "    if (data.unit && data.unit.id) {",
+                  "        pm.collectionVariables.set('unit_id', data.unit.id);",
+                  "        console.log('unit_id saved to collection variables:', data.unit.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hintAr\": \"مقدمة عن الجزء الأول\",\n  \"hintEn\": \"Introduction to Part 1\",\n  \"labelAr\": \"الوحدة الأولى\",\n  \"labelEn\": \"Unit 1\",\n  \"partId\": \"{{part_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/units",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "units"
+              ]
+            },
+            "description": "Admin-only endpoint to create a new unit linked to an existing Part (1-to-Many relationship)."
+          },
+          "response": []
+        },
+        {
+          "name": "2. Get All Units",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/units",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "units"
+              ]
+            },
+            "description": "Admin-only endpoint to retrieve all units with populated parent Part details."
+          },
+          "response": []
+        },
+        {
+          "name": "3. Get Units By Part ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/units?partId={{part_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "units"
+              ],
+              "query": [
+                {
+                  "key": "partId",
+                  "value": "{{part_id}}",
+                  "description": "Filter units belonging to a specific Part ID"
+                }
+              ]
+            },
+            "description": "Admin-only endpoint to retrieve all units belonging to a specific Part."
+          },
+          "response": []
+        },
+        {
+          "name": "4. Get Unit By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/units/{{unit_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "units",
+                "{{unit_id}}"
+              ]
+            },
+            "description": "Admin-only endpoint to retrieve a single unit by its MongoDB ObjectId."
+          },
+          "response": []
+        },
+        {
+          "name": "5. Update Unit (Patch)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hintAr\": \"مقدمة محدثة عن الجزء الأول\",\n  \"hintEn\": \"Updated introduction to Part 1\",\n  \"labelAr\": \"الوحدة الأولى - محدثة\",\n  \"labelEn\": \"Unit 1 Updated\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/units/{{unit_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "units",
+                "{{unit_id}}"
+              ]
+            },
+            "description": "Admin-only endpoint to partially update a unit's fields or reassign it to another existing Part."
+          },
+          "response": []
+        },
+        {
+          "name": "6. Delete Unit",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/units/{{unit_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "units",
+                "{{unit_id}}"
+              ]
+            },
+            "description": "Admin-only endpoint to delete a unit by its MongoDB ObjectId."
           },
           "response": []
         }
