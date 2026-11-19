@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "a9d3e8e1-5e92-491c-b2e1-953e77a72d3f",
     "name": "Alwadih Backend API",
-    "description": "Comprehensive Postman collection for the Alwadih API including Multilingual (ar/en) support, User & Admin Authentication (with 2FA OTP), Password Reset flows, Support Requests, User Preferences, User Profile management, Public Content (FAQ & Privacy Policy), and Admin-only Parts, Units, Lessons & Days CRUD.",
+    "description": "Comprehensive Postman collection for the Alwadih API including Multilingual (ar/en) support, User & Admin Authentication (with 2FA OTP), Password Reset flows, Support Requests, User Preferences, User Profile management, Public Content (FAQ & Privacy Policy), and Admin-only Parts, Units, Lessons, Days, Phases & Steps CRUD.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -43,6 +43,16 @@
     },
     {
       "key": "day_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "phase_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "step_id",
       "value": "",
       "type": "string"
     }
@@ -1740,6 +1750,426 @@
               ]
             },
             "description": "Admin-only endpoint to delete a day by its MongoDB ObjectId."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Phases (Admin Only)",
+      "item": [
+        {
+          "name": "1. Create Phase",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "    var data = pm.response.json();",
+                  "    if (data.phase && data.phase.id) {",
+                  "        pm.collectionVariables.set('phase_id', data.phase.id);",
+                  "        console.log('phase_id saved to collection variables:', data.phase.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"LEARNING\",\n  \"descriptionAr\": \"مرحلة التعلم والشرح النظري لأحكام التجويد\",\n  \"descriptionEn\": \"Learning and theoretical explanation phase for Tajweed rules\",\n  \"dayId\": \"{{day_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/phases",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "phases"
+              ]
+            },
+            "description": "Admin-only endpoint to create a new phase linked to an existing Day (1-to-Many relationship)."
+          },
+          "response": []
+        },
+        {
+          "name": "2. Get All Phases",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/phases",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "phases"
+              ]
+            },
+            "description": "Admin-only endpoint to retrieve all phases with populated parent Day details."
+          },
+          "response": []
+        },
+        {
+          "name": "3. Get Phases By Day ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/phases?dayId={{day_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "phases"
+              ],
+              "query": [
+                {
+                  "key": "dayId",
+                  "value": "{{day_id}}",
+                  "description": "Filter phases belonging to a specific Day ID"
+                }
+              ]
+            },
+            "description": "Admin-only endpoint to retrieve all phases belonging to a specific Day."
+          },
+          "response": []
+        },
+        {
+          "name": "4. Get Phase By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/phases/{{phase_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "phases",
+                "{{phase_id}}"
+              ]
+            },
+            "description": "Admin-only endpoint to retrieve a single phase by its MongoDB ObjectId."
+          },
+          "response": []
+        },
+        {
+          "name": "5. Update Phase (Patch)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"LEARNING\",\n  \"descriptionAr\": \"مرحلة التعلم والشرح النظري المحدث لأحكام التجويد\",\n  \"descriptionEn\": \"Updated learning and theoretical explanation phase for Tajweed rules\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/phases/{{phase_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "phases",
+                "{{phase_id}}"
+              ]
+            },
+            "description": "Admin-only endpoint to partially update a phase's fields or reassign it to another existing Day."
+          },
+          "response": []
+        },
+        {
+          "name": "6. Delete Phase",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/phases/{{phase_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "phases",
+                "{{phase_id}}"
+              ]
+            },
+            "description": "Admin-only endpoint to delete a phase by its MongoDB ObjectId."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Steps (Admin Only)",
+      "item": [
+        {
+          "name": "1. Create Step",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "    var data = pm.response.json();",
+                  "    if (data.step && data.step.id) {",
+                  "        pm.collectionVariables.set('step_id', data.step.id);",
+                  "        console.log('step_id saved to collection variables:', data.step.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"descriptionAr\": \"استمع إلى تلاوة المثال وحدد موضع الإظهار الحلقي\",\n  \"descriptionEn\": \"Listen to the example recitation and identify the Izhar Halqi position\",\n  \"type\": \"interactive_listening\",\n  \"layoutType\": \"GRID-4\",\n  \"data\": {\n    \"audioUrl\": \"https://example.com/audio/sample1.mp3\",\n    \"verseText\": \"مَنْ آمَنَ\",\n    \"options\": [\"الإظهار\", \"الإدغام\", \"الإقلاب\", \"الإخفاء\"],\n    \"correctAnswer\": \"الإظهار\"\n  },\n  \"phaseId\": \"{{phase_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/steps",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "steps"
+              ]
+            },
+            "description": "Admin-only endpoint to create a new step linked to an existing Phase (1-to-Many relationship)."
+          },
+          "response": []
+        },
+        {
+          "name": "2. Get All Steps",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/steps",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "steps"
+              ]
+            },
+            "description": "Admin-only endpoint to retrieve all steps with populated parent Phase details."
+          },
+          "response": []
+        },
+        {
+          "name": "3. Get Steps By Phase ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/steps?phaseId={{phase_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "steps"
+              ],
+              "query": [
+                {
+                  "key": "phaseId",
+                  "value": "{{phase_id}}",
+                  "description": "Filter steps belonging to a specific Phase ID"
+                }
+              ]
+            },
+            "description": "Admin-only endpoint to retrieve all steps belonging to a specific Phase."
+          },
+          "response": []
+        },
+        {
+          "name": "4. Get Step By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/steps/{{step_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "steps",
+                "{{step_id}}"
+              ]
+            },
+            "description": "Admin-only endpoint to retrieve a single step by its MongoDB ObjectId."
+          },
+          "response": []
+        },
+        {
+          "name": "5. Update Step (Patch)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"descriptionAr\": \"استمع إلى تلاوة المثال وحدد موضع الإظهار بدقة (محدث)\",\n  \"descriptionEn\": \"Listen to the example recitation and precisely identify the Izhar position (Updated)\",\n  \"layoutType\": \"GRID-2\",\n  \"data\": {\n    \"audioUrl\": \"https://example.com/audio/sample1_v2.mp3\",\n    \"verseText\": \"مَنْ آمَنَ\",\n    \"correctAnswer\": \"الإظهار\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/steps/{{step_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "steps",
+                "{{step_id}}"
+              ]
+            },
+            "description": "Admin-only endpoint to partially update a step's fields or reassign it to another existing Phase."
+          },
+          "response": []
+        },
+        {
+          "name": "6. Delete Step",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/steps/{{step_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "steps",
+                "{{step_id}}"
+              ]
+            },
+            "description": "Admin-only endpoint to delete a step by its MongoDB ObjectId."
           },
           "response": []
         }

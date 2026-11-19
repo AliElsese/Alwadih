@@ -100,6 +100,25 @@ export const messages = {
     dayAlreadyExists: 'A day with this Arabic or English name already exists in this lesson.',
     invalidDayId: 'Invalid day identifier.',
 
+    // Phases
+    phaseCreatedSuccess: 'Phase created successfully.',
+    phasesRetrievedSuccess: 'Phases retrieved successfully.',
+    phaseRetrievedSuccess: 'Phase retrieved successfully.',
+    phaseUpdatedSuccess: 'Phase updated successfully.',
+    phaseDeletedSuccess: 'Phase deleted successfully.',
+    phaseNotFound: 'Phase not found.',
+    phaseAlreadyExists: 'A phase with this type already exists in this day.',
+    invalidPhaseId: 'Invalid phase identifier.',
+
+    // Steps
+    stepCreatedSuccess: 'Step created successfully.',
+    stepsRetrievedSuccess: 'Steps retrieved successfully.',
+    stepRetrievedSuccess: 'Step retrieved successfully.',
+    stepUpdatedSuccess: 'Step updated successfully.',
+    stepDeletedSuccess: 'Step deleted successfully.',
+    stepNotFound: 'Step not found.',
+    invalidStepId: 'Invalid step identifier.',
+
     // General
     helloWorld: 'Hello World!',
   },
@@ -201,6 +220,25 @@ export const messages = {
     dayNotFound: 'لم يتم العثور على اليوم المطلوب.',
     dayAlreadyExists: 'يوجد يوم مسجل بالفعل بهذا الاسم العربي أو الإنجليزي في هذا الدرس.',
     invalidDayId: 'معرف اليوم غير صالح.',
+
+    // Phases
+    phaseCreatedSuccess: 'تم إضافة المرحلة بنجاح.',
+    phasesRetrievedSuccess: 'تم استرجاع المراحل بنجاح.',
+    phaseRetrievedSuccess: 'تم استرجاع المرحلة بنجاح.',
+    phaseUpdatedSuccess: 'تم تحديث المرحلة بنجاح.',
+    phaseDeletedSuccess: 'تم حذف المرحلة بنجاح.',
+    phaseNotFound: 'لم يتم العثور على المرحلة المطلوبة.',
+    phaseAlreadyExists: 'توجد مرحلة مسجلة بالفعل بهذا النوع في هذا اليوم.',
+    invalidPhaseId: 'معرف المرحلة غير صالح.',
+
+    // Steps
+    stepCreatedSuccess: 'تم إضافة الخطوة بنجاح.',
+    stepsRetrievedSuccess: 'تم استرجاع الخطوات بنجاح.',
+    stepRetrievedSuccess: 'تم استرجاع الخطوة بنجاح.',
+    stepUpdatedSuccess: 'تم تحديث الخطوة بنجاح.',
+    stepDeletedSuccess: 'تم حذف الخطوة بنجاح.',
+    stepNotFound: 'لم يتم العثور على الخطوة المطلوبة.',
+    invalidStepId: 'معرف الخطوة غير صالح.',
 
     // General
     helloWorld: 'مرحباً بكم في منصة الواضح!',
