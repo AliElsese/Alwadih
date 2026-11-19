@@ -90,6 +90,16 @@ export const messages = {
     lessonAlreadyExists: 'A lesson with this Arabic or English name already exists in this unit.',
     invalidLessonId: 'Invalid lesson identifier.',
 
+    // Days
+    dayCreatedSuccess: 'Day created successfully.',
+    daysRetrievedSuccess: 'Days retrieved successfully.',
+    dayRetrievedSuccess: 'Day retrieved successfully.',
+    dayUpdatedSuccess: 'Day updated successfully.',
+    dayDeletedSuccess: 'Day deleted successfully.',
+    dayNotFound: 'Day not found.',
+    dayAlreadyExists: 'A day with this Arabic or English name already exists in this lesson.',
+    invalidDayId: 'Invalid day identifier.',
+
     // General
     helloWorld: 'Hello World!',
   },
@@ -181,6 +191,16 @@ export const messages = {
     lessonNotFound: 'لم يتم العثور على الدرس المطلوب.',
     lessonAlreadyExists: 'يوجد درس مسجل بالفعل بهذا الاسم العربي أو الإنجليزي في هذه الوحدة.',
     invalidLessonId: 'معرف الدرس غير صالح.',
+
+    // Days
+    dayCreatedSuccess: 'تم إضافة اليوم بنجاح.',
+    daysRetrievedSuccess: 'تم استرجاع الأيام بنجاح.',
+    dayRetrievedSuccess: 'تم استرجاع اليوم بنجاح.',
+    dayUpdatedSuccess: 'تم تحديث اليوم بنجاح.',
+    dayDeletedSuccess: 'تم حذف اليوم بنجاح.',
+    dayNotFound: 'لم يتم العثور على اليوم المطلوب.',
+    dayAlreadyExists: 'يوجد يوم مسجل بالفعل بهذا الاسم العربي أو الإنجليزي في هذا الدرس.',
+    invalidDayId: 'معرف اليوم غير صالح.',
 
     // General
     helloWorld: 'مرحباً بكم في منصة الواضح!',

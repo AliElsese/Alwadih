@@ -13,6 +13,7 @@ import { ContentModule } from './content/content.module.js';
 import { PartModule } from './parts/part.module.js';
 import { UnitModule } from './units/unit.module.js';
 import { LessonModule } from './lessons/lesson.module.js';
+import { DayModule } from './days/day.module.js';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guards/jwtAuth.guard.js';
 
@@ -46,6 +47,7 @@ import { JwtAuthGuard } from './auth/guards/jwtAuth.guard.js';
     PartModule,
     UnitModule,
     LessonModule,
+    DayModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: JwtAuthGuard }],

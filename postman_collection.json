@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "a9d3e8e1-5e92-491c-b2e1-953e77a72d3f",
     "name": "Alwadih Backend API",
-    "description": "Comprehensive Postman collection for the Alwadih API including Multilingual (ar/en) support, User & Admin Authentication (with 2FA OTP), Password Reset flows, Support Requests, User Preferences, User Profile management, Public Content (FAQ & Privacy Policy), and Admin-only Parts, Units & Lessons CRUD.",
+    "description": "Comprehensive Postman collection for the Alwadih API including Multilingual (ar/en) support, User & Admin Authentication (with 2FA OTP), Password Reset flows, Support Requests, User Preferences, User Profile management, Public Content (FAQ & Privacy Policy), and Admin-only Parts, Units, Lessons & Days CRUD.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -38,6 +38,11 @@
     },
     {
       "key": "lesson_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "day_id",
       "value": "",
       "type": "string"
     }
@@ -1525,6 +1530,216 @@
               ]
             },
             "description": "Admin-only endpoint to delete a lesson by its MongoDB ObjectId."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Days (Admin Only)",
+      "item": [
+        {
+          "name": "1. Create Day",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "    var data = pm.response.json();",
+                  "    if (data.day && data.day.id) {",
+                  "        pm.collectionVariables.set('day_id', data.day.id);",
+                  "        console.log('day_id saved to collection variables:', data.day.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nameAr\": \"اليوم الأول\",\n  \"nameEn\": \"Day 1\",\n  \"headerTextAr\": \"عنوان اليوم الأول\",\n  \"headerTextEn\": \"Day 1 Header Text\",\n  \"purpose\": \"فهم وممارسة أحكام التجويد الأساسية\",\n  \"expectedTime\": 30,\n  \"lessonId\": \"{{lesson_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/days",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "days"
+              ]
+            },
+            "description": "Admin-only endpoint to create a new day linked to an existing Lesson (1-to-Many relationship)."
+          },
+          "response": []
+        },
+        {
+          "name": "2. Get All Days",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/days",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "days"
+              ]
+            },
+            "description": "Admin-only endpoint to retrieve all days with populated parent Lesson details."
+          },
+          "response": []
+        },
+        {
+          "name": "3. Get Days By Lesson ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/days?lessonId={{lesson_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "days"
+              ],
+              "query": [
+                {
+                  "key": "lessonId",
+                  "value": "{{lesson_id}}",
+                  "description": "Filter days belonging to a specific Lesson ID"
+                }
+              ]
+            },
+            "description": "Admin-only endpoint to retrieve all days belonging to a specific Lesson."
+          },
+          "response": []
+        },
+        {
+          "name": "4. Get Day By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/days/{{day_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "days",
+                "{{day_id}}"
+              ]
+            },
+            "description": "Admin-only endpoint to retrieve a single day by its MongoDB ObjectId."
+          },
+          "response": []
+        },
+        {
+          "name": "5. Update Day (Patch)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nameAr\": \"اليوم الأول - محدث\",\n  \"nameEn\": \"Day 1 Updated\",\n  \"headerTextAr\": \"عنوان اليوم الأول المحدث\",\n  \"headerTextEn\": \"Day 1 Updated Header Text\",\n  \"purpose\": \"مراجعة وتثبيت أحكام التجويد\",\n  \"expectedTime\": 45\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/days/{{day_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "days",
+                "{{day_id}}"
+              ]
+            },
+            "description": "Admin-only endpoint to partially update a day's fields or reassign it to another existing Lesson."
+          },
+          "response": []
+        },
+        {
+          "name": "6. Delete Day",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/days/{{day_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "days",
+                "{{day_id}}"
+              ]
+            },
+            "description": "Admin-only endpoint to delete a day by its MongoDB ObjectId."
           },
           "response": []
         }
