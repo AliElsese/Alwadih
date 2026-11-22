@@ -119,6 +119,13 @@ export const messages = {
     stepNotFound: 'Step not found.',
     invalidStepId: 'Invalid step identifier.',
 
+    // Journey
+    journeyRetrievedSuccess: 'Learning journey retrieved successfully.',
+    journeyProgressUpdatedSuccess: 'Learning journey progress updated successfully.',
+    journeyProgressResetSuccess: 'Learning journey progress reset successfully.',
+    lessonDaysRetrievedSuccess: 'Lesson days retrieved successfully.',
+    dayProgressUpdatedSuccess: 'Day progress updated successfully.',
+
     // General
     helloWorld: 'Hello World!',
   },
@@ -239,6 +246,13 @@ export const messages = {
     stepDeletedSuccess: 'تم حذف الخطوة بنجاح.',
     stepNotFound: 'لم يتم العثور على الخطوة المطلوبة.',
     invalidStepId: 'معرف الخطوة غير صالح.',
+
+    // Journey
+    journeyRetrievedSuccess: 'تم استرجاع الرحلة التعليمية بنجاح.',
+    journeyProgressUpdatedSuccess: 'تم تحديث تقدم الرحلة التعليمية بنجاح.',
+    journeyProgressResetSuccess: 'تمت إعادة ضبط تقدم الرحلة التعليمية بنجاح.',
+    lessonDaysRetrievedSuccess: 'تم استرجاع أيام الدرس بنجاح.',
+    dayProgressUpdatedSuccess: 'تم تحديث تقدم اليوم بنجاح.',
 
     // General
     helloWorld: 'مرحباً بكم في منصة الواضح!',

@@ -21,6 +21,8 @@ export class Step extends Document {
     })
     layoutType: StepLayoutType;
 
+    // محتاج تكون ب validate على ال layouttypes
+    // confirm before create layout with data
     @Prop({ type: SchemaTypes.Mixed, required: true })
     data: Record<string, unknown>;
 

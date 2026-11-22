@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "a9d3e8e1-5e92-491c-b2e1-953e77a72d3f",
     "name": "Alwadih Backend API",
-    "description": "Comprehensive Postman collection for the Alwadih API including Multilingual (ar/en) support, User & Admin Authentication (with 2FA OTP), Password Reset flows, Support Requests, User Preferences, User Profile management, Public Content (FAQ & Privacy Policy), and Admin-only Parts, Units, Lessons, Days, Phases & Steps CRUD.",
+    "description": "Comprehensive Postman collection for the Alwadih API including Multilingual (ar/en) support, User & Admin Authentication (with 2FA OTP), Password Reset flows, Support Requests, User Preferences, User Profile management, Public Content (FAQ & Privacy Policy), Admin-only Parts, Units, Lessons, Days, Phases & Steps CRUD, and User Learning Journey progression.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -2170,6 +2170,217 @@
               ]
             },
             "description": "Admin-only endpoint to delete a step by its MongoDB ObjectId."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Learning Journey (User / Mobile)",
+      "item": [
+        {
+          "name": "1. Get Learning Journey",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/journey",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "journey"
+              ]
+            },
+            "description": "Retrieves the authenticated user's learning journey road map: parts with availability (isAvailable) and completion status (isCompleted), visited units, and lessons with their days count and progress status (CURRENT, COMPLETED, LOCKED)."
+          },
+          "response": []
+        },
+        {
+          "name": "2. Get Learning Journey (Only Available Parts)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/journey?onlyAvailable=true",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "journey"
+              ],
+              "query": [
+                {
+                  "key": "onlyAvailable",
+                  "value": "true",
+                  "description": "Filters only parts available to the user"
+                }
+              ]
+            },
+            "description": "Retrieves only the available / unlocked parts for the authenticated user."
+          },
+          "response": []
+        },
+        {
+          "name": "3. Get Lesson Days",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/journey/lessons/{{lesson_id}}/days",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "journey",
+                "lessons",
+                "{{lesson_id}}",
+                "days"
+              ]
+            },
+            "description": "Retrieves all days belonging to a specific lesson, with each day's progress status: CURRENT, COMPLETED, or LOCKED."
+          },
+          "response": []
+        },
+        {
+          "name": "4. Get Day Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/journey/days/{{day_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "journey",
+                "days",
+                "{{day_id}}"
+              ]
+            },
+            "description": "Retrieves the details of a specific day including unit hints (unitHintAr, unitHintEn), day status (CURRENT, COMPLETED, LOCKED), and its phases (type, descriptionAr, descriptionEn, phaseId)."
+          },
+          "response": []
+        },
+        {
+          "name": "5. Complete Day",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/journey/complete-day/{{day_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "journey",
+                "complete-day",
+                "{{day_id}}"
+              ]
+            },
+            "description": "Marks a specific day as completed for the authenticated user and automatically advances the journey pointer to the next day or lesson."
+          },
+          "response": []
+        },
+        {
+          "name": "6. Complete Lesson",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/journey/complete-lesson/{{lesson_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "journey",
+                "complete-lesson",
+                "{{lesson_id}}"
+              ]
+            },
+            "description": "Marks a specific lesson as completed for the authenticated user and automatically advances the journey pointer to the next lesson, unit, or part."
+          },
+          "response": []
+        },
+        {
+          "name": "7. Reset Journey Progress",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/journey/reset",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "journey",
+                "reset"
+              ]
+            },
+            "description": "Resets the authenticated user's learning journey progress back to the very beginning (Part 1, Unit 1, Lesson 1, Day 1)."
           },
           "response": []
         }
