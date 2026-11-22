@@ -1,8 +1,13 @@
-import { Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
+import { Controller, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { JourneyService } from '../services/journey.service.js';
 import { GetJourneyQueryDto } from '../dtos/get-journey-query.dto.js';
 import { AppLanguage, Language } from '../../common/i18n/language.decorator.js';
+import { Roles } from '../../auth/decorators/roles.decorator.js';
+import { UserRole } from '../../auth/enums/auth.enum.js';
+import { RolesGuard } from '../../auth/guards/roles.guard.js';
 
+@Roles(UserRole.USER)
+@UseGuards(RolesGuard)
 @Controller('journey')
 export class JourneyController {
     constructor(private readonly journeyService: JourneyService) { }

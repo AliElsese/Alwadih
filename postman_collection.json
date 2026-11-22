@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "a9d3e8e1-5e92-491c-b2e1-953e77a72d3f",
     "name": "Alwadih Backend API",
-    "description": "Comprehensive Postman collection for the Alwadih API including Multilingual (ar/en) support, User & Admin Authentication (with 2FA OTP), Password Reset flows, Support Requests, User Preferences, User Profile management, Public Content (FAQ & Privacy Policy), Admin-only Parts, Units, Lessons, Days, Phases & Steps CRUD, and User Learning Journey progression.",
+    "description": "Comprehensive Postman collection for the Alwadih API including Multilingual (ar/en) support, User & Admin Authentication (with 2FA OTP), Password Reset flows, Support Requests, User Preferences, User Profile management, Public Content (FAQ & Privacy Policy), Admin-only Parts, Units, Lessons, Days, Phases & Steps CRUD, and User-only (role: user) Learning Journey progression.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -2201,7 +2201,7 @@
                 "journey"
               ]
             },
-            "description": "Retrieves the authenticated user's learning journey road map: parts with availability (isAvailable) and completion status (isCompleted), visited units, and lessons with their days count and progress status (CURRENT, COMPLETED, LOCKED)."
+            "description": "[Requires regular User role: user] Retrieves the authenticated user's learning journey road map: parts with availability (isAvailable) and completion status (isCompleted), visited units, and lessons with their days count and progress status (CURRENT, COMPLETED, LOCKED)."
           },
           "response": []
         },
@@ -2235,7 +2235,7 @@
                 }
               ]
             },
-            "description": "Retrieves only the available / unlocked parts for the authenticated user."
+            "description": "[Requires regular User role: user] Retrieves only the available / unlocked parts for the authenticated user."
           },
           "response": []
         },
@@ -2265,7 +2265,7 @@
                 "days"
               ]
             },
-            "description": "Retrieves all days belonging to a specific lesson, with each day's progress status: CURRENT, COMPLETED, or LOCKED."
+            "description": "[Requires regular User role: user] Retrieves all days belonging to a specific lesson, with each day's progress status: CURRENT, COMPLETED, or LOCKED."
           },
           "response": []
         },
@@ -2294,7 +2294,7 @@
                 "{{day_id}}"
               ]
             },
-            "description": "Retrieves the details of a specific day including unit hints (unitHintAr, unitHintEn), day status (CURRENT, COMPLETED, LOCKED), and its phases (type, descriptionAr, descriptionEn, phaseId)."
+            "description": "[Requires regular User role: user] Retrieves the details of a specific day including unit hints (unitHintAr, unitHintEn), day status (CURRENT, COMPLETED, LOCKED), and its phases (type, descriptionAr, descriptionEn, phaseId)."
           },
           "response": []
         },
@@ -2323,7 +2323,7 @@
                 "{{day_id}}"
               ]
             },
-            "description": "Marks a specific day as completed for the authenticated user and automatically advances the journey pointer to the next day or lesson."
+            "description": "[Requires regular User role: user] Marks a specific day as completed for the authenticated user and automatically advances the journey pointer to the next day or lesson."
           },
           "response": []
         },
@@ -2352,7 +2352,7 @@
                 "{{lesson_id}}"
               ]
             },
-            "description": "Marks a specific lesson as completed for the authenticated user and automatically advances the journey pointer to the next lesson, unit, or part."
+            "description": "[Requires regular User role: user] Marks a specific lesson as completed for the authenticated user and automatically advances the journey pointer to the next lesson, unit, or part."
           },
           "response": []
         },
@@ -2380,11 +2380,12 @@
                 "reset"
               ]
             },
-            "description": "Resets the authenticated user's learning journey progress back to the very beginning (Part 1, Unit 1, Lesson 1, Day 1)."
+            "description": "[Requires regular User role: user] Resets the authenticated user's learning journey progress back to the very beginning (Part 1, Unit 1, Lesson 1, Day 1)."
           },
           "response": []
         }
-      ]
+      ],
+      "description": "Educational journey endpoints strictly restricted to authenticated regular users (role: user). Admin accounts are forbidden by RolesGuard."
     }
   ]
 }
