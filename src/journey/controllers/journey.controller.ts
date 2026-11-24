@@ -66,6 +66,20 @@ export class JourneyController {
     }
 
     /**
+     * GET /journey/days/:dayId/steps
+     * Retrieves all steps of a specific day across all its phases,
+     * along with layout-aware step data.
+     */
+    @Get('days/:dayId/steps')
+    async getDaySteps(
+        @Param('dayId') dayId: string,
+        @Req() req: any,
+        @Language() lang: AppLanguage,
+    ) {
+        return this.journeyService.getDaySteps(req.user.userId, dayId, lang);
+    }
+
+    /**
      * POST /journey/complete-day/:dayId
      * Marks a day as completed for the current user and advances to the next day or lesson.
      */

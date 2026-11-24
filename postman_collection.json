@@ -2005,7 +2005,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"descriptionAr\": \"استمع إلى تلاوة المثال وحدد موضع الإظهار الحلقي\",\n  \"descriptionEn\": \"Listen to the example recitation and identify the Izhar Halqi position\",\n  \"type\": \"interactive_listening\",\n  \"layoutType\": \"GRID-4\",\n  \"data\": {\n    \"audioUrl\": \"https://example.com/audio/sample1.mp3\",\n    \"verseText\": \"مَنْ آمَنَ\",\n    \"options\": [\"الإظهار\", \"الإدغام\", \"الإقلاب\", \"الإخفاء\"],\n    \"correctAnswer\": \"الإظهار\"\n  },\n  \"phaseId\": \"{{phase_id}}\"\n}"
+              "raw": "{\n  \"descriptionAr\": \"استمع إلى نطق الحروف وحدد المخرج الصحيح\",\n  \"descriptionEn\": \"Listen to letter pronunciation and identify the correct articulation\",\n  \"type\": \"letter-recognition\",\n  \"layoutType\": \"GRID-4\",\n  \"data\": {\n    \"items\": [\n      {\n        \"text\": \"ء\",\n        \"audioUrl\": \"https://cdn.alwadih.com/audio/letters/hamza.mp3\"\n      },\n      {\n        \"text\": \"هـ\",\n        \"audioUrl\": \"https://cdn.alwadih.com/audio/letters/ha.mp3\"\n      },\n      {\n        \"text\": \"ع\",\n        \"audioUrl\": \"https://cdn.alwadih.com/audio/letters/ayn.mp3\"\n      },\n      {\n        \"text\": \"ح\",\n        \"audioUrl\": \"https://cdn.alwadih.com/audio/letters/ha2.mp3\"\n      }\n    ]\n  },\n  \"phaseId\": \"{{phase_id}}\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/steps",
@@ -2172,6 +2172,34 @@
             "description": "Admin-only endpoint to delete a step by its MongoDB ObjectId."
           },
           "response": []
+        },
+        {
+          "name": "7. Get Layout Samples",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/steps/layout-samples",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "steps",
+                "layout-samples"
+              ]
+            },
+            "description": "Admin-only endpoint to retrieve sample schema structures for all supported Step layout types (GRID-2, GRID-4, GRID-5)."
+          },
+          "response": []
         }
       ]
     },
@@ -2299,7 +2327,37 @@
           "response": []
         },
         {
-          "name": "5. Complete Day",
+          "name": "5. Get Day Steps",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/journey/days/{{day_id}}/steps",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "journey",
+                "days",
+                "{{day_id}}",
+                "steps"
+              ]
+            },
+            "description": "[Requires regular User role: user] Retrieves all steps of a specific day across all its phases with layout-typed data. Accessible only if day is CURRENT or COMPLETED (rejects with 403 Forbidden if LOCKED)."
+          },
+          "response": []
+        },
+        {
+          "name": "6. Complete Day",
           "request": {
             "method": "POST",
             "header": [
@@ -2328,7 +2386,7 @@
           "response": []
         },
         {
-          "name": "6. Complete Lesson",
+          "name": "7. Complete Lesson",
           "request": {
             "method": "POST",
             "header": [
@@ -2357,7 +2415,7 @@
           "response": []
         },
         {
-          "name": "7. Reset Journey Progress",
+          "name": "8. Reset Journey Progress",
           "request": {
             "method": "POST",
             "header": [

@@ -118,6 +118,7 @@ export const messages = {
     stepDeletedSuccess: 'Step deleted successfully.',
     stepNotFound: 'Step not found.',
     invalidStepId: 'Invalid step identifier.',
+    invalidStepData: 'Invalid step data for the given layout type.',
 
     // Journey
     journeyRetrievedSuccess: 'Learning journey retrieved successfully.',
@@ -125,6 +126,9 @@ export const messages = {
     journeyProgressResetSuccess: 'Learning journey progress reset successfully.',
     lessonDaysRetrievedSuccess: 'Lesson days retrieved successfully.',
     dayProgressUpdatedSuccess: 'Day progress updated successfully.',
+    phaseStepsRetrievedSuccess: 'Phase steps retrieved successfully.',
+    dayStepsRetrievedSuccess: 'Day steps retrieved successfully.',
+    dayLocked: 'This day is locked and cannot be accessed yet.',
 
     // General
     helloWorld: 'Hello World!',
@@ -246,6 +250,7 @@ export const messages = {
     stepDeletedSuccess: 'تم حذف الخطوة بنجاح.',
     stepNotFound: 'لم يتم العثور على الخطوة المطلوبة.',
     invalidStepId: 'معرف الخطوة غير صالح.',
+    invalidStepData: 'بيانات الخطوة غير صالحة للنوع المحدد.',
 
     // Journey
     journeyRetrievedSuccess: 'تم استرجاع الرحلة التعليمية بنجاح.',
@@ -253,6 +258,9 @@ export const messages = {
     journeyProgressResetSuccess: 'تمت إعادة ضبط تقدم الرحلة التعليمية بنجاح.',
     lessonDaysRetrievedSuccess: 'تم استرجاع أيام الدرس بنجاح.',
     dayProgressUpdatedSuccess: 'تم تحديث تقدم اليوم بنجاح.',
+    phaseStepsRetrievedSuccess: 'تم استرجاع خطوات المرحلة بنجاح.',
+    dayStepsRetrievedSuccess: 'تم استرجاع خطوات اليوم بنجاح.',
+    dayLocked: 'هذا اليوم مغلق ولا يمكن الوصول إليه حالياً.',
 
     // General
     helloWorld: 'مرحباً بكم في منصة الواضح!',

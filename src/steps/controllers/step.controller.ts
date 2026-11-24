@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { StepService } from '../services/step.service.js';
+import { stepLayoutSamples } from '../layouts/step-layout.samples.js';
 import { CreateStepDto } from '../dtos/create-step.dto.js';
 import { UpdateStepDto } from '../dtos/update-step.dto.js';
 import { GetStepsQueryDto } from '../dtos/get-steps-query.dto.js';
@@ -30,6 +31,15 @@ export class StepController {
         @Language() lang: AppLanguage,
     ) {
         return this.stepService.getAllSteps(query, lang);
+    }
+
+    // GET /steps/layout-samples
+    @Get('layout-samples')
+    getLayoutSamples() {
+        return {
+            message: 'Step layout samples retrieved successfully.',
+            samples: stepLayoutSamples,
+        };
     }
 
     // GET /steps/:id

@@ -23,6 +23,20 @@ describe('JourneyService', () => {
     const mockDay1Id = new Types.ObjectId();
     const mockDay2Id = new Types.ObjectId();
     const mockPhase1Id = new Types.ObjectId();
+    const mockStep1Id = new Types.ObjectId();
+
+    const mockSteps = [
+        {
+            _id: mockStep1Id,
+            phaseId: mockPhase1Id,
+            descriptionAr: 'خطوة 1',
+            descriptionEn: 'Step 1',
+            type: 'letter-recognition',
+            layoutType: 'GRID-4',
+            data: { items: [{ text: 'ء', audioUrl: 'https://cdn.example.com/audio.mp3' }] },
+            createdAt: new Date(1000),
+        },
+    ];
 
     const mockParts = [
         { _id: mockPart1Id, partNameAr: 'الجزء الأول', partNameEn: 'Part 1', createdAt: new Date(1000) },
@@ -183,7 +197,15 @@ describe('JourneyService', () => {
             }),
         };
 
-        mockStepModel = {};
+        mockStepModel = {
+            find: vi.fn().mockReturnValue({
+                sort: vi.fn().mockReturnValue({
+                    lean: vi.fn().mockReturnValue({
+                        exec: vi.fn().mockResolvedValue(mockSteps),
+                    }),
+                }),
+            }),
+        };
 
         mockUserProgressModel = {
             findOne: vi.fn(),
@@ -355,5 +377,61 @@ describe('JourneyService', () => {
         expect(res.day.phases[0].phaseId).toBe(mockPhase1Id.toString());
         expect(res.day.phases[0].type).toBe('learning');
         expect(res.day.phases[0].descriptionAr).toBe('شرح نظري');
+    });
+
+    it('should return day steps with phases and steps when day is CURRENT', async () => {
+        const progressDoc = {
+            userId: new Types.ObjectId(mockUserId),
+            currentPartId: mockPart1Id,
+            currentUnitId: mockUnit1Id,
+            currentLessonId: mockLesson1Id,
+            currentDayId: mockDay1Id,
+            completedPartIds: [] as Types.ObjectId[],
+            completedUnitIds: [] as Types.ObjectId[],
+            completedLessonIds: [] as Types.ObjectId[],
+            completedDayIds: [] as Types.ObjectId[],
+            completedPhaseIds: [] as Types.ObjectId[],
+            completedStepIds: [] as Types.ObjectId[],
+        };
+
+        mockUserProgressModel.findOne.mockReturnValue({
+            exec: vi.fn().mockResolvedValue(progressDoc),
+        });
+
+        const res = await service.getDaySteps(mockUserId, mockDay1Id.toString(), AppLanguage.AR);
+
+        expect(res.day.id).toBe(mockDay1Id.toString());
+        expect(res.day.status).toBe(DayProgressStatus.CURRENT);
+        expect(res.phases).toHaveLength(1);
+        expect(res.phases[0].steps).toHaveLength(1);
+        expect(res.phases[0].steps[0].id).toBe(mockStep1Id.toString());
+        expect(res.phases[0].steps[0].layoutType).toBe('GRID-4');
+        expect(res.steps).toHaveLength(1);
+        expect(res.steps[0].id).toBe(mockStep1Id.toString());
+    });
+
+    it('should throw ForbiddenException if day is LOCKED when requesting steps', async () => {
+        const progressDoc = {
+            userId: new Types.ObjectId(mockUserId),
+            currentPartId: mockPart1Id,
+            currentUnitId: mockUnit1Id,
+            currentLessonId: mockLesson1Id,
+            currentDayId: mockDay1Id,
+            completedPartIds: [] as Types.ObjectId[],
+            completedUnitIds: [] as Types.ObjectId[],
+            completedLessonIds: [] as Types.ObjectId[],
+            completedDayIds: [] as Types.ObjectId[],
+            completedPhaseIds: [] as Types.ObjectId[],
+            completedStepIds: [] as Types.ObjectId[],
+        };
+
+        mockUserProgressModel.findOne.mockReturnValue({
+            exec: vi.fn().mockResolvedValue(progressDoc),
+        });
+
+        // mockDay2Id is LOCKED because current is Day 1 and Day 1 not completed
+        await expect(
+            service.getDaySteps(mockUserId, mockDay2Id.toString(), AppLanguage.AR),
+        ).rejects.toThrow();
     });
 });

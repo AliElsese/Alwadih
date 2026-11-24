@@ -8,6 +8,7 @@ import { Model, isValidObjectId } from 'mongoose';
 import { Step } from '../schemas/step.schema.js';
 import { Phase } from '../../phases/schemas/phase.schema.js';
 import { StepLayoutType } from '../enums/step.enum.js';
+import { validateStepLayoutData } from '../layouts/step-layout.validator.js';
 import { CreateStepDto } from '../dtos/create-step.dto.js';
 import { UpdateStepDto } from '../dtos/update-step.dto.js';
 import { GetStepsQueryDto } from '../dtos/get-steps-query.dto.js';
@@ -37,6 +38,11 @@ export class StepService {
         const { layoutType, data, phaseId } = createStepDto;
 
         await this.ensurePhaseExists(phaseId, msg);
+
+        const layoutValidation = validateStepLayoutData(layoutType, data);
+        if (!layoutValidation.valid) {
+            throw new BadRequestException(layoutValidation.message ?? msg.invalidStepData);
+        }
 
         const createdStep = await this.StepModel.create({
             descriptionAr,
@@ -149,6 +155,16 @@ export class StepService {
         if (updateStepDto.phaseId !== undefined) {
             await this.ensurePhaseExists(updateStepDto.phaseId, msg);
             updateData.phaseId = updateStepDto.phaseId;
+        }
+
+        // If layoutType or data is changing, validate the final combination
+        if (updateData.layoutType !== undefined || updateData.data !== undefined) {
+            const finalLayoutType = updateData.layoutType ?? existingStep.layoutType;
+            const finalData = updateData.data ?? (existingStep.data as Record<string, unknown>);
+            const layoutValidation = validateStepLayoutData(finalLayoutType, finalData);
+            if (!layoutValidation.valid) {
+                throw new BadRequestException(layoutValidation.message ?? msg.invalidStepData);
+            }
         }
 
         const updatedStep = Object.keys(updateData).length > 0

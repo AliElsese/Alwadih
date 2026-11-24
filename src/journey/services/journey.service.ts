@@ -1,5 +1,6 @@
 import {
     BadRequestException,
+    ForbiddenException,
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
@@ -627,6 +628,168 @@ export class JourneyService {
         }
 
         return progress;
+    }
+
+    /**
+     * Retrieves all steps for a specific day across all its phases,
+     * including day info and layout-typed step data.
+     * Accessible only if the day is CURRENT or COMPLETED (not LOCKED).
+     */
+    async getDaySteps(
+        userId: string,
+        dayId: string,
+        lang: AppLanguage | 'ar' | 'en' = AppLanguage.EN,
+    ) {
+        const msg = getMessages(lang);
+        this.validateUserId(userId, msg);
+
+        if (!isValidObjectId(dayId)) {
+            throw new BadRequestException(msg.invalidDayId);
+        }
+
+        // Get day details & verify user progress/access
+        const dayDetailsResult = await this.getDayDetails(userId, dayId, lang);
+        if (dayDetailsResult.day.status === DayProgressStatus.LOCKED) {
+            throw new ForbiddenException(msg.dayLocked);
+        }
+
+        const day = dayDetailsResult.day;
+
+        // Fetch phases for this day ordered chronologically
+        const phases = await this.phaseModel
+            .find({ dayId: new Types.ObjectId(dayId) })
+            .sort({ createdAt: 1 })
+            .lean()
+            .exec();
+
+        const phaseIds = phases.map((p) => p._id);
+
+        // Fetch all steps belonging to these phases ordered chronologically
+        const steps = await this.stepModel
+            .find({ phaseId: { $in: phaseIds } })
+            .sort({ createdAt: 1 })
+            .lean()
+            .exec();
+
+        // Group steps by phaseId
+        const stepsByPhaseId = new Map<string, typeof steps>();
+        for (const step of steps) {
+            const pId = step.phaseId.toString();
+            if (!stepsByPhaseId.has(pId)) {
+                stepsByPhaseId.set(pId, []);
+            }
+            stepsByPhaseId.get(pId)!.push(step);
+        }
+
+        // Format phases with their steps
+        const formattedPhases = phases.map((phase) => {
+            const phaseIdStr = phase._id.toString();
+            const phaseSteps = stepsByPhaseId.get(phaseIdStr) || [];
+
+            return {
+                phaseId: phaseIdStr,
+                type: phase.type,
+                descriptionAr: phase.descriptionAr,
+                descriptionEn: phase.descriptionEn,
+                description: lang === 'ar' ? phase.descriptionAr : phase.descriptionEn,
+                steps: phaseSteps.map((step) => ({
+                    id: step._id.toString(),
+                    descriptionAr: step.descriptionAr,
+                    descriptionEn: step.descriptionEn,
+                    type: step.type,
+                    layoutType: step.layoutType,
+                    data: step.data,
+                })),
+            };
+        });
+
+        // Also provide flat list of all steps with phase info
+        const phaseMap = new Map(phases.map((p) => [p._id.toString(), p]));
+        const formattedSteps = steps.map((step) => {
+            const parentPhase = phaseMap.get(step.phaseId.toString());
+            return {
+                id: step._id.toString(),
+                phaseId: step.phaseId.toString(),
+                phaseType: parentPhase?.type,
+                descriptionAr: step.descriptionAr,
+                descriptionEn: step.descriptionEn,
+                type: step.type,
+                layoutType: step.layoutType,
+                data: step.data,
+            };
+        });
+
+        return {
+            message: msg.dayStepsRetrievedSuccess,
+            day: {
+                id: day.id,
+                nameAr: day.nameAr,
+                nameEn: day.nameEn,
+                headerTextAr: day.headerTextAr,
+                headerTextEn: day.headerTextEn,
+                purpose: day.purpose,
+                expectedTime: day.expectedTime,
+                unitHintAr: day.unitHintAr,
+                unitHintEn: day.unitHintEn,
+                status: day.status,
+            },
+            phases: formattedPhases,
+            steps: formattedSteps,
+        };
+    }
+
+    /**
+     * Retrieves all steps for a specific phase, including phase info and step data.
+     * The phase's parent day must be CURRENT or COMPLETED for the user (not LOCKED).
+     */
+    async getPhaseSteps(
+        userId: string,
+        phaseId: string,
+        lang: AppLanguage | 'ar' | 'en' = AppLanguage.EN,
+    ) {
+        const msg = getMessages(lang);
+        this.validateUserId(userId, msg);
+
+        if (!isValidObjectId(phaseId)) {
+            throw new BadRequestException(msg.invalidPhaseId);
+        }
+
+        const phase = await this.phaseModel.findById(phaseId).lean().exec();
+        if (!phase) {
+            throw new NotFoundException(msg.phaseNotFound);
+        }
+
+        // Ensure the parent day is accessible (not LOCKED) for this user
+        const dayId = phase.dayId.toString();
+        const dayDetailsResult = await this.getDayDetails(userId, dayId, lang);
+        if (dayDetailsResult.day.status === 'LOCKED') {
+            throw new BadRequestException(msg.dayNotFound);
+        }
+
+        // Fetch steps for this phase ordered chronologically
+        const steps = await this.stepModel
+            .find({ phaseId: phase._id })
+            .sort({ createdAt: 1 })
+            .lean()
+            .exec();
+
+        return {
+            message: msg.phaseStepsRetrievedSuccess,
+            phase: {
+                phaseId: phase._id.toString(),
+                type: phase.type,
+                descriptionAr: phase.descriptionAr,
+                descriptionEn: phase.descriptionEn,
+            },
+            steps: steps.map((step) => ({
+                id: step._id.toString(),
+                descriptionAr: step.descriptionAr,
+                descriptionEn: step.descriptionEn,
+                type: step.type,
+                layoutType: step.layoutType,
+                data: step.data,
+            })),
+        };
     }
 
     private validateUserId(userId: string, msg: ReturnType<typeof getMessages>) {
