@@ -130,6 +130,13 @@ export const messages = {
     dayStepsRetrievedSuccess: 'Day steps retrieved successfully.',
     dayLocked: 'This day is locked and cannot be accessed yet.',
 
+    // Arabic Letters
+    lettersRetrievedSuccess: 'Arabic letters retrieved successfully.',
+    letterRetrievedSuccess: 'Arabic letter retrieved successfully.',
+    letterNotFound: 'Arabic letter not found.',
+    invalidLetterId: 'Invalid letter identifier.',
+    letterAudioUpdatedSuccess: 'Letter audio clip updated successfully.',
+
     // General
     helloWorld: 'Hello World!',
   },
@@ -261,6 +268,13 @@ export const messages = {
     phaseStepsRetrievedSuccess: 'تم استرجاع خطوات المرحلة بنجاح.',
     dayStepsRetrievedSuccess: 'تم استرجاع خطوات اليوم بنجاح.',
     dayLocked: 'هذا اليوم مغلق ولا يمكن الوصول إليه حالياً.',
+
+    // Arabic Letters
+    lettersRetrievedSuccess: 'تم استرجاع حروف اللغة العربية بنجاح.',
+    letterRetrievedSuccess: 'تم استرجاع الحرف العربي بنجاح.',
+    letterNotFound: 'لم يتم العثور على الحرف المطلوب.',
+    invalidLetterId: 'معرف الحرف غير صالح.',
+    letterAudioUpdatedSuccess: 'تم تحديث المقطع الصوتي للحرف بنجاح.',
 
     // General
     helloWorld: 'مرحباً بكم في منصة الواضح!',

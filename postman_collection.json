@@ -55,6 +55,11 @@
       "key": "step_id",
       "value": "",
       "type": "string"
+    },
+    {
+      "key": "letter_id",
+      "value": "",
+      "type": "string"
     }
   ],
   "item": [
@@ -2444,6 +2449,143 @@
         }
       ],
       "description": "Educational journey endpoints strictly restricted to authenticated regular users (role: user). Admin accounts are forbidden by RolesGuard."
+    },
+    {
+      "name": "Arabic Letters",
+      "item": [
+        {
+          "name": "1. Get All Arabic Letters (Public)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var data = pm.response.json();",
+                  "    if (data.letters && data.letters.length > 0) {",
+                  "        pm.collectionVariables.set('letter_id', data.letters[0].id);",
+                  "        console.log('Saved letter_id:', data.letters[0].id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/letters",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "letters"
+              ]
+            },
+            "description": "Public endpoint to retrieve all 28 Arabic letters in standard alphabetical order, each with its tajweed classification type (LATHWI, TAFKHEEM, LATHWI_MUFAKKHAM, TARQEEQ_WA_TAFKHEEM), localized type labels, and audio clip URL."
+          },
+          "response": []
+        },
+        {
+          "name": "2. Get Arabic Letters Filtered by Type (Public)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/letters?type=TAFKHEEM",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "letters"
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "TAFKHEEM",
+                  "description": "Available types: LATHWI (حروف لثوية), TAFKHEEM (حروف تفخيم), LATHWI_MUFAKKHAM (حرف لثوي مفخم), TARQEEQ_WA_TAFKHEEM (حروف تدور بين الترقيق والتفخيم)"
+                }
+              ]
+            },
+            "description": "Public endpoint to retrieve Arabic letters filtered by their phonetic/tajweed classification type."
+          },
+          "response": []
+        },
+        {
+          "name": "3. Get Arabic Letter By ID or Character (Public)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/letters/{{letter_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "letters",
+                "{{letter_id}}"
+              ]
+            },
+            "description": "Public endpoint to retrieve a single Arabic letter by its MongoDB ObjectId or by its Arabic letter character (e.g. /letters/ث or /letters/{{letter_id}})."
+          },
+          "response": []
+        },
+        {
+          "name": "4. Update Letter Audio URL (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"audioUrl\": \"https://cdn.alwadih.com/audio/letters/thaa.mp3\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/letters/{{letter_id}}/audio",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "letters",
+                "{{letter_id}}",
+                "audio"
+              ]
+            },
+            "description": "Admin-only endpoint to update or attach an external audio clip URL to an Arabic letter."
+          },
+          "response": []
+        }
+      ],
+      "description": "Arabic letters module endpoints including public retrieval of alphabet letters with Tajweed classifications and admin-only audio clip management."
     }
   ]
 }

@@ -17,6 +17,7 @@ import { DayModule } from './days/day.module.js';
 import { PhaseModule } from './phases/phase.module.js';
 import { StepModule } from './steps/step.module.js';
 import { JourneyModule } from './journey/journey.module.js';
+import { LetterModule } from './letters/letter.module.js';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guards/jwtAuth.guard.js';
 
@@ -54,6 +55,7 @@ import { JwtAuthGuard } from './auth/guards/jwtAuth.guard.js';
     PhaseModule,
     StepModule,
     JourneyModule,
+    LetterModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: JwtAuthGuard }],
