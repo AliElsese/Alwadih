@@ -24,6 +24,13 @@ export class Unit extends Document {
         index: true,
     })
     partId: Types.ObjectId;
+
+    @Prop({
+        type: Boolean,
+        default: true,
+        index: true,
+    })
+    isPublished: boolean;
 }
 
 export const UnitSchema = SchemaFactory.createForClass(Unit);

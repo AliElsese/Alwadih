@@ -51,6 +51,7 @@ describe('JourneyService', () => {
             hintEn: 'Unit 1 Hint',
             labelAr: 'الوحدة الأولى',
             labelEn: 'Unit 1',
+            isPublished: true,
             createdAt: new Date(1000),
         },
     ];
@@ -122,13 +123,17 @@ describe('JourneyService', () => {
         };
 
         mockUnitModel = {
-            find: vi.fn().mockReturnValue({
+            find: vi.fn().mockImplementation((filter?: any) => ({
                 sort: vi.fn().mockReturnValue({
                     lean: vi.fn().mockReturnValue({
-                        exec: vi.fn().mockResolvedValue(mockUnits),
+                        exec: vi.fn().mockResolvedValue(
+                            filter?.isPublished?.$ne === false
+                                ? mockUnits.filter((u: any) => u.isPublished !== false)
+                                : mockUnits,
+                        ),
                     }),
                 }),
-            }),
+            })),
             findById: vi.fn().mockImplementation((id: string) => ({
                 lean: vi.fn().mockReturnValue({
                     exec: vi.fn().mockResolvedValue(
@@ -433,5 +438,55 @@ describe('JourneyService', () => {
         await expect(
             service.getDaySteps(mockUserId, mockDay2Id.toString(), AppLanguage.AR),
         ).rejects.toThrow();
+    });
+
+    it('should query units with isPublished $ne false and exclude unpublished units', async () => {
+        const unpublishedUnitId = new Types.ObjectId();
+        const unitsWithUnpublished = [
+            ...mockUnits,
+            {
+                _id: unpublishedUnitId,
+                partId: mockPart1Id,
+                hintAr: 'غير منشور',
+                hintEn: 'Unpublished',
+                labelAr: 'وحدة مخفية',
+                labelEn: 'Hidden Unit',
+                isPublished: false,
+                createdAt: new Date(1500),
+            },
+        ];
+
+        mockUnitModel.find = vi.fn().mockImplementation((filter?: any) => ({
+            sort: vi.fn().mockReturnValue({
+                lean: vi.fn().mockReturnValue({
+                    exec: vi.fn().mockResolvedValue(
+                        filter?.isPublished?.$ne === false
+                            ? unitsWithUnpublished.filter((u: any) => u.isPublished !== false)
+                            : unitsWithUnpublished,
+                    ),
+                }),
+            }),
+        }));
+
+        mockUserProgressModel.findOne.mockReturnValue({
+            exec: vi.fn().mockResolvedValue({
+                userId: new Types.ObjectId(mockUserId),
+                currentPartId: mockPart1Id,
+                currentUnitId: mockUnit1Id,
+                currentLessonId: mockLesson1Id,
+                completedPartIds: [],
+                completedUnitIds: [],
+                completedLessonIds: [],
+                completedDayIds: [],
+                completedPhaseIds: [],
+                completedStepIds: [],
+            }),
+        });
+
+        const res = await service.getLearningJourney(mockUserId, {}, AppLanguage.AR);
+        expect(mockUnitModel.find).toHaveBeenCalledWith({ isPublished: { $ne: false } });
+
+        const part1Units = res.parts.find((p) => p.id === mockPart1Id.toString())?.units ?? [];
+        expect(part1Units.some((u) => u.id === unpublishedUnitId.toString())).toBe(false);
     });
 });

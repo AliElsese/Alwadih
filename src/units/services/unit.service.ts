@@ -38,12 +38,15 @@ export class UnitService {
         await this.ensurePartExists(partId, msg);
         await this.ensureUniqueLabelsInPart(msg, partId, labelAr, labelEn);
 
+        const isPublished = createUnitDto.isPublished !== undefined ? createUnitDto.isPublished : true;
+
         const createdUnit = await this.UnitModel.create({
             hintAr,
             hintEn,
             labelAr,
             labelEn,
             partId,
+            isPublished,
         });
 
         await createdUnit.populate('partId', 'partNameAr partNameEn');
@@ -132,6 +135,7 @@ export class UnitService {
             labelAr: string;
             labelEn: string;
             partId: string;
+            isPublished: boolean;
         }> = {};
 
         if (updateUnitDto.hintAr !== undefined) {
@@ -148,6 +152,9 @@ export class UnitService {
         }
         if (updateUnitDto.partId !== undefined) {
             updateData.partId = updateUnitDto.partId;
+        }
+        if (updateUnitDto.isPublished !== undefined) {
+            updateData.isPublished = updateUnitDto.isPublished;
         }
 
         if (
@@ -286,6 +293,7 @@ export class UnitService {
             labelAr: unit.labelAr,
             labelEn: unit.labelEn,
             partId: isPopulated ? partDoc._id!.toString() : unit.partId.toString(),
+            isPublished: unit.isPublished ?? true,
             ...(isPopulated && {
                 part: {
                     id: partDoc._id!.toString(),

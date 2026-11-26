@@ -45,7 +45,7 @@ export class JourneyService {
         // Fetch all educational structures in chronological order
         const [parts, units, lessons] = await Promise.all([
             this.partModel.find().sort({ createdAt: 1 }).lean().exec(),
-            this.unitModel.find().sort({ createdAt: 1 }).lean().exec(),
+            this.unitModel.find({ isPublished: { $ne: false } }).sort({ createdAt: 1 }).lean().exec(),
             this.lessonModel.find().sort({ createdAt: 1 }).lean().exec(),
         ]);
 
@@ -200,7 +200,7 @@ export class JourneyService {
         const [days, parts, units, lessons] = await Promise.all([
             this.dayModel.find({ lessonId: lesson._id }).sort({ createdAt: 1 }).lean().exec(),
             this.partModel.find().sort({ createdAt: 1 }).lean().exec(),
-            this.unitModel.find().sort({ createdAt: 1 }).lean().exec(),
+            this.unitModel.find({ isPublished: { $ne: false } }).sort({ createdAt: 1 }).lean().exec(),
             this.lessonModel.find().sort({ createdAt: 1 }).lean().exec(),
         ]);
 
@@ -402,7 +402,7 @@ export class JourneyService {
 
         const [parts, units, lessons, daysInLesson] = await Promise.all([
             this.partModel.find().sort({ createdAt: 1 }).lean().exec(),
-            this.unitModel.find().sort({ createdAt: 1 }).lean().exec(),
+            this.unitModel.find({ isPublished: { $ne: false } }).sort({ createdAt: 1 }).lean().exec(),
             this.lessonModel.find().sort({ createdAt: 1 }).lean().exec(),
             this.dayModel.find({ lessonId: day.lessonId }).sort({ createdAt: 1 }).lean().exec(),
         ]);
@@ -462,7 +462,7 @@ export class JourneyService {
         // Fetch all educational structures in chronological order
         const [parts, units, lessons] = await Promise.all([
             this.partModel.find().sort({ createdAt: 1 }).lean().exec(),
-            this.unitModel.find().sort({ createdAt: 1 }).lean().exec(),
+            this.unitModel.find({ isPublished: { $ne: false } }).sort({ createdAt: 1 }).lean().exec(),
             this.lessonModel.find().sort({ createdAt: 1 }).lean().exec(),
         ]);
 
@@ -494,7 +494,7 @@ export class JourneyService {
         const currentUnit = units.find((u) => u._id.toString() === unitIdStr);
         if (currentUnit) {
             const partIdStr = currentUnit.partId.toString();
-            const unitsInPart = units.filter((u) => u.partId.toString() === partIdStr);
+            const unitsInPart = units.filter((u) => u.partId.toString() === partIdStr && u.isPublished !== false);
             const allUnitsInPartCompleted = unitsInPart.every((u) => completedUnitSet.has(u._id.toString()));
 
             if (allUnitsInPartCompleted) {
@@ -511,7 +511,7 @@ export class JourneyService {
         let nextPart: (typeof parts)[0] | undefined;
 
         for (const p of parts) {
-            const pUnits = units.filter((u) => u.partId.toString() === p._id.toString());
+            const pUnits = units.filter((u) => u.partId.toString() === p._id.toString() && u.isPublished !== false);
             for (const u of pUnits) {
                 const uLessons = lessons.filter((l) => l.unitId.toString() === u._id.toString());
                 for (const l of uLessons) {
@@ -596,7 +596,7 @@ export class JourneyService {
         if (!progress) {
             const firstPart = parts[0];
             const firstUnit = firstPart
-                ? units.find((u) => u.partId.toString() === firstPart._id.toString())
+                ? units.find((u) => u.partId.toString() === firstPart._id.toString() && u.isPublished !== false)
                 : undefined;
             const firstLesson = firstUnit
                 ? lessons.find((l) => l.unitId.toString() === firstUnit._id.toString())

@@ -1,4 +1,4 @@
-import { IsMongoId, IsNotEmpty, IsString } from 'class-validator';
+import { IsBoolean, IsMongoId, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateUnitDto {
     @IsString({ message: 'Arabic hint must be a valid string.' })
@@ -20,4 +20,8 @@ export class CreateUnitDto {
     @IsMongoId({ message: 'Part ID must be a valid MongoDB ObjectId.' })
     @IsNotEmpty({ message: 'Part ID is required.' })
     partId: string;
+
+    @IsOptional()
+    @IsBoolean({ message: 'isPublished must be a boolean value.' })
+    isPublished?: boolean;
 }

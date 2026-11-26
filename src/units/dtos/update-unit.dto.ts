@@ -1,4 +1,4 @@
-import { IsMongoId, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsMongoId, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class UpdateUnitDto {
     @IsOptional()
@@ -24,4 +24,8 @@ export class UpdateUnitDto {
     @IsOptional()
     @IsMongoId({ message: 'Part ID must be a valid MongoDB ObjectId.' })
     partId?: string;
+
+    @IsOptional()
+    @IsBoolean({ message: 'isPublished must be a boolean value.' })
+    isPublished?: boolean;
 }

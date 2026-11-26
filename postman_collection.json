@@ -1198,7 +1198,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"hintAr\": \"مقدمة عن الجزء الأول\",\n  \"hintEn\": \"Introduction to Part 1\",\n  \"labelAr\": \"الوحدة الأولى\",\n  \"labelEn\": \"Unit 1\",\n  \"partId\": \"{{part_id}}\"\n}"
+              "raw": "{\n  \"hintAr\": \"مقدمة عن الجزء الأول\",\n  \"hintEn\": \"Introduction to Part 1\",\n  \"labelAr\": \"الوحدة الأولى\",\n  \"labelEn\": \"Unit 1\",\n  \"partId\": \"{{part_id}}\",\n  \"isPublished\": true\n}"
             },
             "url": {
               "raw": "{{base_url}}/units",
