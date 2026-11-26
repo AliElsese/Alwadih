@@ -287,6 +287,34 @@
             "description": "Authenticates a verified user and returns a signed JWT access token. Returns 401 Unauthorized if credentials are invalid or if the email is not verified."
           },
           "response": []
+        },
+        {
+          "name": "6. Logout (User)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/logout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "logout"
+              ]
+            },
+            "description": "Logs out the authenticated user and terminates active sessions by invalidating their JWT tokens via tokenVersion. Requires Bearer authorization."
+          },
+          "response": []
         }
       ]
     },

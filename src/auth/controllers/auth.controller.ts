@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Post, Req } from "@nestjs/common";
 import { AuthService } from "../services/auth.service.js";
 import { SignupDto } from "../dtos/signup.dto.js";
 import { LoginDto } from "../dtos/login.dto.js";
@@ -11,12 +11,12 @@ import { GoogleAuthDto } from "../dtos/google-auth.dto.js";
 import { AppLanguage, Language } from "../../common/i18n/language.decorator.js";
 import { Public } from "../decorators/public.decorator.js";
 
-@Public()
 @Controller('auth')
 export class AuthController {
     constructor(private readonly authService: AuthService) { }
 
     // POST Signup
+    @Public()
     @Post('signup')
     async signup(
         @Body() signupData: SignupDto,
@@ -26,6 +26,7 @@ export class AuthController {
     }
 
     // POST Verify Account OTP
+    @Public()
     @Post('verify-otp')
     async verifyOtp(
         @Body() verifyOtpData: VerifyOtpDto,
@@ -35,6 +36,7 @@ export class AuthController {
     }
 
     // POST Resend Account OTP
+    @Public()
     @Post('resend-otp')
     async resendOtp(
         @Body() resendOtpData: ResendOtpDto,
@@ -44,6 +46,7 @@ export class AuthController {
     }
 
     // POST Google Register or Login
+    @Public()
     @Post('google')
     async googleAuth(
         @Body() googleAuthData: GoogleAuthDto,
@@ -53,6 +56,7 @@ export class AuthController {
     }
 
     // POST Forgot Password (Step 1: Check email and send OTP)
+    @Public()
     @Post('forgot-password')
     async forgotPassword(
         @Body() forgotPasswordData: ForgotPasswordDto,
@@ -62,6 +66,7 @@ export class AuthController {
     }
 
     // POST Resend Reset Password OTP
+    @Public()
     @Post('resend-reset-otp')
     async resendResetOtp(
         @Body() resendResetOtpData: ResendOtpDto,
@@ -71,6 +76,7 @@ export class AuthController {
     }
 
     // POST Verify Reset OTP (Step 2: Verify OTP)
+    @Public()
     @Post('verify-reset-otp')
     async verifyResetOtp(
         @Body() verifyResetOtpData: VerifyResetOtpDto,
@@ -80,6 +86,7 @@ export class AuthController {
     }
 
     // POST Reset Password (Step 3: Change password)
+    @Public()
     @Post('reset-password')
     async resetPassword(
         @Body() resetPasswordData: ResetPasswordDto,
@@ -89,11 +96,21 @@ export class AuthController {
     }
 
     // POST Login
+    @Public()
     @Post('login')
     async login(
         @Body() loginData: LoginDto,
         @Language() lang: AppLanguage,
     ) {
         return this.authService.login(loginData, lang);
+    }
+
+    // POST Logout (Invalidates the user's active session/tokens)
+    @Post('logout')
+    async logout(
+        @Req() req: any,
+        @Language() lang: AppLanguage,
+    ) {
+        return this.authService.logout(req.user.userId, lang);
     }
 }

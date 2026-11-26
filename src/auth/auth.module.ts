@@ -17,5 +17,6 @@ import { AdminAuthController } from './controllers/admin-auth.controller.js';
     ],
     controllers: [AuthController, AdminAuthController],
     providers: [AuthService, AdminAuthService],
+    exports: [AuthService, AdminAuthService, MongooseModule],
 })
 export class AuthModule { }

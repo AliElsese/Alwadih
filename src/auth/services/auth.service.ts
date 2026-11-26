@@ -245,7 +245,7 @@ export class AuthService {
             }
         }
 
-        const jwt = await this.generateUserToken(user._id, user.role);
+        const jwt = await this.generateUserToken(user._id, user.role, (user as any).tokenVersion ?? 0);
 
         return {
             message: msg.googleAuthSuccess,
@@ -411,7 +411,7 @@ export class AuthService {
             throw new UnauthorizedException(msg.accountNotVerified);
         }
 
-        const token = await this.generateUserToken(user._id, user.role);
+        const token = await this.generateUserToken(user._id, user.role, (user as any).tokenVersion ?? 0);
 
         return {
             message: msg.loginSuccess,
@@ -425,11 +425,24 @@ export class AuthService {
         };
     }
 
-    async generateUserToken(userId: any, role: UserRole = UserRole.USER) {
-        const accessToken = role === UserRole.USER ? this.jwtService.sign({ userId, role }, { expiresIn: '1d' }) : this.jwtService.sign({ userId, role }, { expiresIn: '30m' });
+    async logout(userId: string, lang: AppLanguage | 'ar' | 'en' = AppLanguage.EN) {
+        const msg = getMessages(lang);
+        await this.UserModel.findByIdAndUpdate(userId, {
+            $inc: { tokenVersion: 1 },
+        }).exec();
 
         return {
-            accessToken
+            message: msg.logoutSuccess,
+        };
+    }
+
+    async generateUserToken(userId: any, role: UserRole = UserRole.USER, tokenVersion = 0) {
+        const accessToken = role === UserRole.USER
+            ? this.jwtService.sign({ userId, role, tokenVersion }, { expiresIn: '180d' })
+            : this.jwtService.sign({ userId, role }, { expiresIn: '30m' });
+
+        return {
+            accessToken,
         };
     }
 }

@@ -49,6 +49,9 @@ export class User extends Document {
 
     @Prop()
     resetTokenExpiresAt?: Date;
+
+    @Prop({ default: 0 })
+    tokenVersion: number;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

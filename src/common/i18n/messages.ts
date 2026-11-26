@@ -31,6 +31,8 @@ export const messages = {
     googleAccountNotice: 'This account was registered using Google. Please sign in with Google or reset your password.',
     accountNotVerified: 'Account is not verified. Please verify your email before logging in.',
     loginSuccess: 'Login successful.',
+    logoutSuccess: 'Logged out successfully.',
+    tokenInvalidated: 'Session expired or token invalidated. Please log in again.',
     adminLoginOtpSent: 'A verification code has been sent to your email to complete login.',
     adminAccessDenied: 'Access denied. Administrator privileges required.',
 
@@ -170,6 +172,8 @@ export const messages = {
     googleAccountNotice: 'تم تسجيل هذا الحساب عبر جوجل. يرجى تسجيل الدخول عبر جوجل أو طلب إعادة تعيين كلمة المرور.',
     accountNotVerified: 'الحساب غير مفعل. يرجى تأكيد بريدك الإلكتروني أولاً لتسجيل الدخول.',
     loginSuccess: 'تم تسجيل الدخول بنجاح.',
+    logoutSuccess: 'تم تسجيل الخروج بنجاح.',
+    tokenInvalidated: 'انتهت صلاحية الجلسة أو تم تسجيل الخروج. يرجى تسجيل الدخول مجدداً.',
     adminLoginOtpSent: 'تم إرسال رمز التحقق إلى بريدك الإلكتروني لإتمام تسجيل الدخول.',
     adminAccessDenied: 'تم رفض الوصول. يتطلب صلاحيات المشرف.',
 
