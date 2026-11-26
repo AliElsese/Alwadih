@@ -42,7 +42,7 @@ export class AuthService {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Generate 4-digit OTP code & 10 minutes expiry
-        const otp = Math.floor(1000 + Math.random() * 9000).toString();
+        const otp = '1111'; // Math.floor(1000 + Math.random() * 9000).toString();
         const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
         if (existingUser) {
@@ -65,8 +65,8 @@ export class AuthService {
             });
         }
 
-        // Send OTP via email
-        await this.mailService.sendOtpEmail(email, otp, lang);
+        // Send OTP via email (Disabled temporarily)
+        // await this.mailService.sendOtpEmail(email, otp, lang);
 
         return {
             message: msg.accountRegisteredSuccess
@@ -122,12 +122,12 @@ export class AuthService {
         }
 
         // Generate 4-digit OTP code & 10 minutes expiry
-        const otp = Math.floor(1000 + Math.random() * 9000).toString();
+        const otp = '1111'; // Math.floor(1000 + Math.random() * 9000).toString();
         user.otp = otp;
         user.otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
         await user.save();
 
-        await this.mailService.sendOtpEmail(email, otp, lang);
+        // await this.mailService.sendOtpEmail(email, otp, lang);
 
         return {
             message: msg.otpResentSuccess
@@ -273,7 +273,7 @@ export class AuthService {
         }
 
         // Generate 4-digit OTP code & 10 minutes expiry
-        const resetOtp = Math.floor(1000 + Math.random() * 9000).toString();
+        const resetOtp = '1111'; // Math.floor(1000 + Math.random() * 9000).toString();
         user.resetOtp = resetOtp;
         user.resetOtpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
@@ -282,8 +282,8 @@ export class AuthService {
         user.resetTokenExpiresAt = undefined;
         await user.save();
 
-        // Send Password Reset OTP Email
-        await this.mailService.sendPasswordResetOtpEmail(email, resetOtp, lang);
+        // Send Password Reset OTP Email (Disabled temporarily)
+        // await this.mailService.sendPasswordResetOtpEmail(email, resetOtp, lang);
 
         return {
             message: msg.forgotPasswordOtpSent
@@ -301,7 +301,7 @@ export class AuthService {
         }
 
         // Generate a new 4-digit OTP code & 10 minutes expiry
-        const resetOtp = Math.floor(1000 + Math.random() * 9000).toString();
+        const resetOtp = '1111'; // Math.floor(1000 + Math.random() * 9000).toString();
         user.resetOtp = resetOtp;
         user.resetOtpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
@@ -310,8 +310,8 @@ export class AuthService {
         user.resetTokenExpiresAt = undefined;
         await user.save();
 
-        // Send Password Reset OTP Email
-        await this.mailService.sendPasswordResetOtpEmail(email, resetOtp, lang);
+        // Send Password Reset OTP Email (Disabled temporarily)
+        // await this.mailService.sendPasswordResetOtpEmail(email, resetOtp, lang);
 
         return {
             message: msg.resetOtpResent

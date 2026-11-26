@@ -54,13 +54,13 @@ export class AdminAuthService {
         }
 
         // Generate 4-digit OTP & 10 minutes expiry
-        const otp = Math.floor(1000 + Math.random() * 9000).toString();
+        const otp = '1111'; // Math.floor(1000 + Math.random() * 9000).toString();
         user.otp = otp;
         user.otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
         await user.save();
 
-        // Send OTP via email to admin
-        await this.mailService.sendAdminLoginOtpEmail(email, otp, lang);
+        // Send OTP via email to admin (Disabled temporarily)
+        // await this.mailService.sendAdminLoginOtpEmail(email, otp, lang);
 
         return {
             message: msg.adminLoginOtpSent,
@@ -120,12 +120,13 @@ export class AdminAuthService {
         }
 
         // Generate fresh 4-digit OTP & 10 minutes expiry
-        const otp = Math.floor(1000 + Math.random() * 9000).toString();
+        const otp = '1111'; // Math.floor(1000 + Math.random() * 9000).toString();
         user.otp = otp;
         user.otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
         await user.save();
 
-        await this.mailService.sendAdminLoginOtpEmail(email, otp, lang);
+        // Send OTP via email to admin (Disabled temporarily)
+        // await this.mailService.sendAdminLoginOtpEmail(email, otp, lang);
 
         return {
             message: msg.otpResentSuccess,
@@ -143,14 +144,15 @@ export class AdminAuthService {
             throw new NotFoundException(msg.emailNotFound);
         }
 
-        const resetOtp = Math.floor(1000 + Math.random() * 9000).toString();
+        const resetOtp = '1111'; // Math.floor(1000 + Math.random() * 9000).toString();
         user.resetOtp = resetOtp;
         user.resetOtpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
         user.resetToken = undefined;
         user.resetTokenExpiresAt = undefined;
         await user.save();
 
-        await this.mailService.sendPasswordResetOtpEmail(email, resetOtp, lang);
+        // Send Password Reset OTP Email (Disabled temporarily)
+        // await this.mailService.sendPasswordResetOtpEmail(email, resetOtp, lang);
 
         return {
             message: msg.forgotPasswordOtpSent,
@@ -166,12 +168,13 @@ export class AdminAuthService {
             throw new NotFoundException(msg.emailNotFound);
         }
 
-        const resetOtp = Math.floor(1000 + Math.random() * 9000).toString();
+        const resetOtp = '1111'; // Math.floor(1000 + Math.random() * 9000).toString();
         user.resetOtp = resetOtp;
         user.resetOtpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
         await user.save();
 
-        await this.mailService.sendPasswordResetOtpEmail(email, resetOtp, lang);
+        // Send Password Reset OTP Email (Disabled temporarily)
+        // await this.mailService.sendPasswordResetOtpEmail(email, resetOtp, lang);
 
         return {
             message: msg.resetOtpResent,
