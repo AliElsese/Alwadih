@@ -18,6 +18,7 @@ import { PhaseModule } from './phases/phase.module.js';
 import { StepModule } from './steps/step.module.js';
 import { JourneyModule } from './journey/journey.module.js';
 import { LetterModule } from './letters/letter.module.js';
+import { StatisticsModule } from './statistics/statistics.module.js';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guards/jwtAuth.guard.js';
 
@@ -56,6 +57,7 @@ import { JwtAuthGuard } from './auth/guards/jwtAuth.guard.js';
     StepModule,
     JourneyModule,
     LetterModule,
+    StatisticsModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: JwtAuthGuard }],

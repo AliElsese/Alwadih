@@ -139,6 +139,9 @@ export const messages = {
     invalidLetterId: 'Invalid letter identifier.',
     letterAudioUpdatedSuccess: 'Letter audio clip updated successfully.',
 
+    // Statistics
+    statisticsRetrievedSuccess: 'Curriculum statistics retrieved successfully.',
+
     // General
     helloWorld: 'Hello World!',
   },
@@ -279,6 +282,9 @@ export const messages = {
     letterNotFound: 'لم يتم العثور على الحرف المطلوب.',
     invalidLetterId: 'معرف الحرف غير صالح.',
     letterAudioUpdatedSuccess: 'تم تحديث المقطع الصوتي للحرف بنجاح.',
+
+    // Statistics
+    statisticsRetrievedSuccess: 'تم استرجاع إحصائيات المنهج بنجاح.',
 
     // General
     helloWorld: 'مرحباً بكم في منصة الواضح!',

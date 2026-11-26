@@ -2614,6 +2614,40 @@
         }
       ],
       "description": "Arabic letters module endpoints including public retrieval of alphabet letters with Tajweed classifications and admin-only audio clip management."
+    },
+    {
+      "name": "Curriculum Statistics (Admin)",
+      "item": [
+        {
+          "name": "1. Get Curriculum Parts Statistics (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{accept_language}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/statistics/parts",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "statistics",
+                "parts"
+              ]
+            },
+            "description": "[Admin Only] Retrieves curriculum statistics for all parts, including units count, lessons count, steps count, and count of distinct layoutTypes."
+          },
+          "response": []
+        }
+      ],
+      "description": "Administrative curriculum statistics and metrics endpoints."
     }
   ]
 }
